@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema;
-const technicianSchema = mongoose.Schema(
+const userSchema = mongoose.Schema(
   {
     first_name: {
       type: String,
@@ -27,6 +27,10 @@ const technicianSchema = mongoose.Schema(
       maxlength: [32, "User name is too long"],
       text: true,
       unique: true,
+    },
+    role: {
+      type: String,
+      default: "technician",
     },
     color: {
       type: String,
@@ -88,4 +92,4 @@ const technicianSchema = mongoose.Schema(
   { timestamp: true }
 );
 
-module.exports = mongoose.model("Technician", technicianSchema);
+module.exports = mongoose.model("User", userSchema);

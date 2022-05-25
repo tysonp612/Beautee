@@ -10,10 +10,10 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("welcome from home");
 });
-// readdirSync("./routes").map((r) =>
-//   app.use("/api", require(`./routes/${r}/${r}.route`))
-// );
-//database
+readdirSync("./routes").map((r) =>
+  app.use("/api", require(`./routes/${r}/${r}.route`))
+);
+//DATABASE
 mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,

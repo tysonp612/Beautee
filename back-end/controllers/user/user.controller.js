@@ -1,9 +1,9 @@
-const Technician = require("./../models/technician.model");
+const User = require("../../models/user.model");
 const bcrypt = require("bcrypt");
-const { validateEmail } = require("./../helper/validation");
-const { generateToken } = require("./../helper/tokens");
-const { sendVerifiedEmail } = require("./../helper/mailer");
-exports.technicianRegister = async (req, res) => {
+const { validateEmail } = require("../../helper/validation");
+const { generateToken } = require("../../helper/tokens");
+const { sendVerifiedEmail } = require("../../helper/mailer");
+exports.userRegister = async (req, res) => {
   try {
     const {
       first_name,
@@ -17,7 +17,7 @@ exports.technicianRegister = async (req, res) => {
       res.status(400).json({ message: "Invalid email" });
     }
     const cryptedPassword = await bcrypt.hash(password, 12);
-    const technician = await new Technician({
+    const user = await new User({
       first_name,
       last_name,
       email,
@@ -26,20 +26,19 @@ exports.technicianRegister = async (req, res) => {
       password: cryptedPassword,
     }).save();
     const emailVerificationToken = generateToken(
-      { id: technician._id.toString() },
+      { id: user._id.toString() },
       "30m"
     );
     const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
-    sendVerifiedEmail(technician.email, technician.first_name, url);
+    sendVerifiedEmail(user.email, user.first_name, url);
     res.status(200).json({
-      id: technician._id,
-      username: technician.username,
-      color: technician.color,
-      picture: technician.picture,
-      first_name: technician.first_name,
-      last_name: technician.last_name,
-      token,
-      verified: technician.verified,
+      id: user._id,
+      username: user.username,
+      color: user.color,
+      picture: user.picture,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      verified: user.verified,
       message: "Register Success, please activate your email to start",
     });
   } catch (err) {
