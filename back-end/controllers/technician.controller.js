@@ -34,6 +34,7 @@ exports.technicianRegister = async (req, res) => {
     res.status(200).json({
       id: technician._id,
       username: technician.username,
+      color: technician.color,
       picture: technician.picture,
       first_name: technician.first_name,
       last_name: technician.last_name,
