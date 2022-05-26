@@ -6,6 +6,7 @@ const { readdirSync } = require("fs");
 const cors = require("cors");
 dotenv.config();
 app.use(express.json());
+app.use(cors());
 //route
 app.get("/", (req, res) => {
   res.send("welcome from home");

@@ -12,7 +12,7 @@ exports.userRegister = async (req, res) => {
       username,
       color,
       password,
-    } = req.body;
+    } = req.body.credentials;
     if (!validateEmail(email)) {
       res.status(400).json({ message: "Invalid email" });
     }
@@ -80,6 +80,6 @@ exports.loginUser = async (req, res) => {
 
 // exports.activateAccount = async (req, res) => {
 //   try {
-//     const 
+//     const
 //   }
 // };
