@@ -18,9 +18,9 @@ exports.userRegister = async (req, res) => {
     }
     const cryptedPassword = await bcrypt.hash(password, 12);
     const user = await new User({
-      first_name,
-      last_name,
-      email,
+      first_name: first_name.toLowerCase(),
+      last_name: last_name.toLowerCase(),
+      email: email.toLowerCase(),
       username,
       color,
       password: cryptedPassword,
@@ -40,6 +40,7 @@ exports.userRegister = async (req, res) => {
       first_name: user.first_name,
       last_name: user.last_name,
       token: token,
+      role: user.role,
       verified: user.verified,
       message: "Register Success, please activate your email to start",
     });
@@ -50,8 +51,8 @@ exports.userRegister = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const { email, password } = req.body.loginCredentials;
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res.status(400).json({
         message: "User not found",
@@ -73,13 +74,45 @@ exports.loginUser = async (req, res) => {
       token: token,
       verified: user.verified,
     });
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// exports.activateAccount = async (req, res) => {
-//   try {
-//     const
-//   }
-// };
+exports.activateUser = async (req, res) => {
+  try {
+    //get user id from user with header token by auth middlewares
+    const validUser = req.user.id;
+    //get token from body as user click on verify link
+    const { token } = req.body;
+    //get user id from verifying token with secret key
+    const userId = jwt.verify(token, process.env.TOKEN_SECRET);
+    //get user by token id
+    const checkUser = await User.findById(userId);
+    //check if 2 token are the same
+    if (validUser !== checkUser._id) {
+      return res.status(400).json({
+        message: "You don't have the authorization to complete this operation.",
+      });
+    }
+    //check if there is any token from body
+    if (!token) {
+      return res.status(400).json({ message: "Invalid Authentification" });
+    }
+    //check if user have been verified
+    if (checkUser.verified == true) {
+      return res
+        .status(400)
+        .json({ message: "This email is already activated." });
+    }
+    if (!checkUser) {
+      return res.status(400).json({ message: "Invalid Authentification" });
+    }
+    await User.findByIdAndUpdate(userId, { verified: true });
+    return res
+      .status(200)
+      .json({ message: "Account has beeen activated successfully." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
