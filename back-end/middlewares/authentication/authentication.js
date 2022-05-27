@@ -12,13 +12,22 @@ exports.authTokenCheck = async (req, res, next) => {
     if (!token) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    const userId = jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
       if (err) {
         return res.status(400).json({ message: "Invalid Authentification" });
       }
-      req.user = user;
-      next();
     });
+    req.user = user;
+    const user = await User.findById(userId);
+    if (user.verified !== true) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Your account has not been verified, please verify before continue using",
+        });
+    }
+    next();
   } catch (err) {
     return res.status(500).json({ message: error.message });
   }

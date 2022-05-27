@@ -1,5 +1,6 @@
 const User = require("../../models/user.model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../../helper/validation");
 const { generateToken } = require("../../helper/tokens");
 const { sendVerifiedEmail } = require("../../helper/mailer");
@@ -72,6 +73,7 @@ exports.loginUser = async (req, res) => {
       first_name: user.first_name,
       last_name: user.last_name,
       token: token,
+      role: user.role,
       verified: user.verified,
     });
   } catch (error) {
@@ -81,24 +83,16 @@ exports.loginUser = async (req, res) => {
 
 exports.activateUser = async (req, res) => {
   try {
-    //get user id from user with header token by auth middlewares
-    const validUser = req.user.id;
-    //get token from body as user click on verify link
-    const { token } = req.body.token;
-    //get user id from verifying token with secret key
-    const userId = jwt.verify(token, process.env.TOKEN_SECRET);
-    //get user by token id
-    const checkUser = await User.findById(userId);
-    //check if 2 token are the same
-    if (validUser !== checkUser._id) {
-      return res.status(400).json({
-        message: "You don't have the authorization to complete this operation.",
-      });
-    }
+    const token = req.body.token.id;
+
     //check if there is any token from body
     if (!token) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
+    //verify token
+    const userId = jwt.verify(token, process.env.TOKEN_SECRET).id;
+    //get user by token id
+    const checkUser = await User.findById(userId);
     //check if user have been verified
     if (checkUser.verified == true) {
       return res
