@@ -97,15 +97,24 @@ exports.activateUser = async (req, res) => {
     if (checkUser.verified == true) {
       return res
         .status(400)
-        .json({ message: "This email is already activated." });
+        .json({ message: "This account is already activated." });
     }
     if (!checkUser) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
     await User.findByIdAndUpdate(userId, { verified: true });
-    return res
-      .status(200)
-      .json({ message: "Account has beeen activated successfully." });
+    return res.status(200).json({
+      message: "Account has beeen activated successfully.",
+      id: checkUser._id,
+      color: checkUser.color,
+      username: checkUser.username,
+      picture: checkUser.picture,
+      first_name: checkUser.first_name,
+      last_name: checkUser.last_name,
+      token: token,
+      role: checkUser.role,
+      verified: checkUser.verified,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
