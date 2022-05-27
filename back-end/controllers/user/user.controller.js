@@ -84,7 +84,7 @@ exports.activateUser = async (req, res) => {
     //get user id from user with header token by auth middlewares
     const validUser = req.user.id;
     //get token from body as user click on verify link
-    const { token } = req.body;
+    const { token } = req.body.token;
     //get user id from verifying token with secret key
     const userId = jwt.verify(token, process.env.TOKEN_SECRET);
     //get user by token id
