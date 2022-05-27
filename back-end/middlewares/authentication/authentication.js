@@ -20,12 +20,10 @@ exports.authTokenCheck = async (req, res, next) => {
     req.user = user;
     const user = await User.findById(userId);
     if (user.verified !== true) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Your account has not been verified, please verify before continue using",
-        });
+      return res.status(400).json({
+        message:
+          "Your account has not been verified, please verify before continue",
+      });
     }
     next();
   } catch (err) {
@@ -48,3 +46,19 @@ exports.adminCheck = async (req, res, next) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+// exports.checkUserVerified = async (req, res, next) => {
+//   try {
+//     const { email } = req.body;
+//     const user = await User.findOne({ email: email });
+//     if (user.verified !== true) {
+//       return res.status(400).json({
+//         message:
+//           "Your account has not been verified, please verify your account",
+//       });
+//     }
+//     next();
+//   } catch (err) {
+//     return res.status(500).json({ message: err.message });
+//   }
+// };

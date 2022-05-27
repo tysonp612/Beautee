@@ -7,5 +7,8 @@ const {
 router.route("/user_register").post(userController.userRegister);
 router.route("/user_login").post(userController.loginUser);
 router.route("/user_activate").post(userController.activateUser);
+router
+  .route("/user_sendResetPasswordEmail")
+  .post(userController.sendResetPasswordEmail);
 
 module.exports = router;

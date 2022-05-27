@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../../helper/validation");
 const { generateToken } = require("../../helper/tokens");
-const { sendVerifiedEmail } = require("../../helper/mailer");
+const { sendVerifiedEmail, sendResetPassword } = require("../../helper/mailer");
 exports.userRegister = async (req, res) => {
   try {
     const {
@@ -117,5 +117,26 @@ exports.activateUser = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+exports.sendResetPasswordEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const checkUser = await User.findOne({ email });
+    if (!checkUser) {
+      return res.status(500).json({
+        message:
+          "There is no account linked to this email address, please try again",
+      });
+    }
+    const passwordResetToken = generateToken(
+      { id: checkUser._id.toString() },
+      "30m"
+    );
+    const url = `${process.env.BASE_URL}/reset-pasword/${passwordResetToken}`;
+    sendResetPassword(checkUser.email, checkUser.first_name, url);
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
 };
