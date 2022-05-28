@@ -12,12 +12,17 @@ exports.authTokenCheck = async (req, res, next) => {
     if (!token) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
-    const userId = jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-      if (err) {
-        return res.status(400).json({ message: "Invalid Authentification" });
+    let userId;
+    const userTokenCheck = jwt.verify(
+      token,
+      process.env.TOKEN_SECRET,
+      (err, res) => {
+        if (err) {
+          return res.status(400).json({ message: "Invalid Authentification" });
+        }
+        userId = res.id;
       }
-    });
-    req.user = user;
+    );
     const user = await User.findById(userId);
     if (user.verified !== true) {
       return res.status(400).json({
@@ -25,9 +30,10 @@ exports.authTokenCheck = async (req, res, next) => {
           "Your account has not been verified, please verify before continue",
       });
     }
+    req.user = user;
     next();
   } catch (err) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -46,19 +52,3 @@ exports.adminCheck = async (req, res, next) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
-// exports.checkUserVerified = async (req, res, next) => {
-//   try {
-//     const { email } = req.body;
-//     const user = await User.findOne({ email: email });
-//     if (user.verified !== true) {
-//       return res.status(400).json({
-//         message:
-//           "Your account has not been verified, please verify your account",
-//       });
-//     }
-//     next();
-//   } catch (err) {
-//     return res.status(500).json({ message: err.message });
-//   }
-// };

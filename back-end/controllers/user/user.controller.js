@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../../helper/validation");
 const { generateToken } = require("../../helper/tokens");
 const { sendVerifiedEmail, sendResetPassword } = require("../../helper/mailer");
+
 exports.userRegister = async (req, res) => {
   try {
     const {
@@ -134,8 +135,23 @@ exports.sendResetPasswordEmail = async (req, res) => {
       { id: checkUser._id.toString() },
       "30m"
     );
-    const url = `${process.env.BASE_URL}/reset-pasword/${passwordResetToken}`;
+    const url = `${process.env.BASE_URL}/reset-password/${passwordResetToken}`;
     sendResetPassword(checkUser.email, checkUser.first_name, url);
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+exports.resetPassword = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { password } = req.body;
+    const cryptedPassword = await bcrypt.hash(password, 12);
+    const updatePassword = await User.findByIdAndUpdate(id, {
+      password: cryptedPassword,
+    });
+    res
+      .status(200)
+      .json({ message: "your password has been updated, please log in again" });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

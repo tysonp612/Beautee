@@ -10,5 +10,7 @@ router.route("/user_activate").post(userController.activateUser);
 router
   .route("/user_sendResetPasswordEmail")
   .post(userController.sendResetPasswordEmail);
-
+router
+  .route("/user_resetPassword")
+  .post(authTokenCheck, userController.resetPassword);
 module.exports = router;
