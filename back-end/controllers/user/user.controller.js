@@ -66,6 +66,11 @@ exports.loginUser = async (req, res) => {
         message: "Invalid credentials. Please try again",
       });
     }
+    if (user.verified !== true) {
+      return res.status(400).json({
+        message: "Please verify your account before logging in",
+      });
+    }
     const token = generateToken({ id: user._id.toString() }, "30d");
     res.status(200).json({
       id: user._id,
@@ -76,6 +81,7 @@ exports.loginUser = async (req, res) => {
       token: token,
       role: user.role,
       verified: user.verified,
+      message: "Login successfully!",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -137,6 +143,9 @@ exports.sendResetPasswordEmail = async (req, res) => {
     );
     const url = `${process.env.BASE_URL}/reset-password/${passwordResetToken}`;
     sendResetPassword(checkUser.email, checkUser.first_name, url);
+    res.status(200).json({
+      message: "A password reset link has been sent to your email address",
+    });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -151,7 +160,7 @@ exports.resetPassword = async (req, res) => {
     });
     res
       .status(200)
-      .json({ message: "your password has been updated, please log in again" });
+      .json({ message: "Your password has been updated, please log in again" });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

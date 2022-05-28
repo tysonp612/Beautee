@@ -24,12 +24,6 @@ exports.authTokenCheck = async (req, res, next) => {
       }
     );
     const user = await User.findById(userId);
-    if (user.verified !== true) {
-      return res.status(400).json({
-        message:
-          "Your account has not been verified, please verify before continue",
-      });
-    }
     req.user = user;
     next();
   } catch (err) {
