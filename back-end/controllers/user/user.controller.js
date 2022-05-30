@@ -1,6 +1,5 @@
 const User = require("../../models/user.model");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../../helper/validation");
 const { generateToken } = require("../../helper/tokens");
 const { sendVerifiedEmail, sendResetPassword } = require("../../helper/mailer");
@@ -51,7 +50,6 @@ exports.userRegister = async (req, res) => {
       { id: user._id.toString() },
       "30m"
     );
-    console.log(email);
     const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}email=${email}`;
     sendVerifiedEmail(user.email, user.first_name, url);
     const token = generateToken({ id: user._id.toString() }, "30d");
@@ -155,7 +153,7 @@ exports.sendResetPasswordEmail = async (req, res) => {
     }
     const passwordResetToken = generateToken(
       { id: checkUser._id.toString() },
-      "1d"
+      "30m"
     );
     const url = `${process.env.BASE_URL}/reset-password/${passwordResetToken}`;
     sendResetPassword(checkUser.email, checkUser.first_name, url);
@@ -170,8 +168,6 @@ exports.resetPassword = async (req, res) => {
   try {
     const { id } = req.user;
     const { password } = req.body;
-    console.log(id);
-    console.log(password);
     const cryptedPassword = await bcrypt.hash(password, 12);
     const updatePassword = await User.findByIdAndUpdate(id, {
       password: cryptedPassword,
