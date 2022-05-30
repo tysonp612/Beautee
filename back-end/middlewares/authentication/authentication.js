@@ -13,15 +13,18 @@ exports.authTokenCheck = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
     let userId;
-    const userTokenCheck = jwt.verify(token, process.env.TOKEN_SECRET);
-    (err, res) => {
-      if (err) {
-        return res.status(400).json({ message: err.message });
+    const userTokenCheck = jwt.verify(
+      token,
+      process.env.TOKEN_SECRET,
+      (err, res) => {
+        if (err) {
+          return res.status(400).json({ message: err.message });
+        }
+        userId = res.id;
       }
-      userId = res.id;
-    };
-    const user = await User.findById(userId);
+    );
 
+    const user = await User.findById(userId);
     req.user = user;
 
     next();
@@ -46,7 +49,7 @@ exports.adminCheck = async (req, res, next) => {
   }
 };
 
-exports.resendVerifyAuthCheck = async (req, res, next) => {
+exports.linkAuthCheck = async (req, res, next) => {
   try {
     let token;
     if (

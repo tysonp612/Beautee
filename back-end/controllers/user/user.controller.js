@@ -160,7 +160,7 @@ exports.sendResetPasswordEmail = async (req, res) => {
     }
     const passwordResetToken = generateToken(
       { id: checkUser._id.toString() },
-      "30m"
+      "1d"
     );
     const url = `${process.env.BASE_URL}/reset-password/${passwordResetToken}`;
     sendResetPassword(checkUser.email, checkUser.first_name, url);
