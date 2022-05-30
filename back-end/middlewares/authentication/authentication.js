@@ -12,6 +12,7 @@ exports.authTokenCheck = async (req, res, next) => {
     if (!token) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
+    console.log(token);
     let userId;
     const userTokenCheck = jwt.verify(
       token,
@@ -25,6 +26,10 @@ exports.authTokenCheck = async (req, res, next) => {
     );
 
     const user = await User.findById(userId);
+    console.log(user);
+    if (!user) {
+      return res.status(400).json("No user found!");
+    }
     req.user = user;
 
     next();
@@ -47,25 +52,4 @@ exports.adminCheck = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json({ message: error.message });
   }
-};
-
-exports.linkAuthCheck = async (req, res, next) => {
-  try {
-    let token;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
-    if (!token) {
-      return res.status(400).json({ message: "Invalid Authentification" });
-    }
-    const user = await User.findOne({ token });
-    if (!user) {
-      return res.status(400).json("No user found!");
-    }
-    req.user = user;
-    next();
-  } catch (err) {}
 };

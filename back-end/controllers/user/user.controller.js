@@ -46,7 +46,9 @@ exports.userRegister = async (req, res) => {
       { id: user._id.toString() },
       "30m"
     );
-    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
+    const adjustedEmail = email.split(".")[0];
+    console.log(adjustedEmail);
+    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}/email=${adjustedEmail}`;
     sendVerifiedEmail(user.email, user.first_name, url);
     const token = generateToken({ id: user._id.toString() }, "30d");
     res.status(200).json({
@@ -59,7 +61,7 @@ exports.userRegister = async (req, res) => {
       token: token,
       role: user.role,
       verified: user.verified,
-      message: "Register Success, please activate your email to start",
+      message: "Register successfully, please activate your email to start",
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -70,12 +72,14 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body.loginCredentials;
     const user = await User.findOne({ email: email.toLowerCase() });
+    console.log(user._id);
     if (!user) {
       return res.status(400).json({
         message: "User not found",
       });
     }
     const passwordCheck = await bcrypt.compare(password, user.password);
+
     if (!passwordCheck) {
       return res.status(400).json({
         message: "Invalid credentials. Please try again",
@@ -105,21 +109,9 @@ exports.loginUser = async (req, res) => {
 
 exports.activateUser = async (req, res) => {
   try {
-    const token = req.body.token;
-    //check if there is any token from body
-    if (!token) {
-      return res.status(400).json({ message: "Invalid Authentification" });
-    }
-    //verify token
-    const userId = jwt.verify(token, process.env.TOKEN_SECRET);
-    if (new Date() < userId.exp) {
-      return res.status(500).json({
-        message: "Verify link has expired, please click on resend link",
-      });
-    }
-
+    const user = req.user;
     //get user by token id
-    const checkUser = await User.findById(userId.id);
+    const checkUser = await User.findById(user._id);
 
     //check if user have been verified
     if (checkUser.verified == true) {
@@ -130,7 +122,7 @@ exports.activateUser = async (req, res) => {
     if (!checkUser) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
-    await User.findByIdAndUpdate(userId.id, { verified: true });
+    await User.findByIdAndUpdate(user._id, { verified: true, new: true });
     return res.status(200).json({
       message: "Account has beeen activated successfully.",
       id: checkUser._id,
@@ -139,7 +131,6 @@ exports.activateUser = async (req, res) => {
       picture: checkUser.picture,
       first_name: checkUser.first_name,
       last_name: checkUser.last_name,
-      token: token,
       role: checkUser.role,
       verified: checkUser.verified,
     });
@@ -175,10 +166,16 @@ exports.resetPassword = async (req, res) => {
   try {
     const { id } = req.user;
     const { password } = req.body;
+    console.log(id);
+    console.log(password);
     const cryptedPassword = await bcrypt.hash(password, 12);
     const updatePassword = await User.findByIdAndUpdate(id, {
       password: cryptedPassword,
+      new: true,
     });
+    if (req.user.verified !== true) {
+      await User.findByIdAndUpdate(id, { verified: true, new: true });
+    }
     res
       .status(200)
       .json({ message: "Your password has been updated, please log in again" });
