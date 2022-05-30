@@ -13,18 +13,17 @@ exports.authTokenCheck = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
     let userId;
-    const userTokenCheck = jwt.verify(
-      token,
-      process.env.TOKEN_SECRET,
-      (err, res) => {
-        if (err) {
-          return res.status(400).json({ message: "Invalid Authentification" });
-        }
-        userId = res.id;
+    const userTokenCheck = jwt.verify(token, process.env.TOKEN_SECRET);
+    (err, res) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
       }
-    );
+      userId = res.id;
+    };
     const user = await User.findById(userId);
+
     req.user = user;
+
     next();
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -45,4 +44,25 @@ exports.adminCheck = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json({ message: error.message });
   }
+};
+
+exports.resendVerifyAuthCheck = async (req, res, next) => {
+  try {
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token) {
+      return res.status(400).json({ message: "Invalid Authentification" });
+    }
+    const user = await User.findOne({ token });
+    if (!user) {
+      return res.status(400).json("No user found!");
+    }
+    req.user = user;
+    next();
+  } catch (err) {}
 };

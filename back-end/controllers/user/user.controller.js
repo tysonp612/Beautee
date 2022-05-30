@@ -5,6 +5,21 @@ const { validateEmail } = require("../../helper/validation");
 const { generateToken } = require("../../helper/tokens");
 const { sendVerifiedEmail, sendResetPassword } = require("../../helper/mailer");
 
+exports.sendVerifyLink = async (req, res) => {
+  try {
+    const emailVerificationToken = generateToken(
+      { id: req.user._id.toString() },
+      "30m"
+    );
+    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
+    sendVerifiedEmail(req.user.email, req.user.first_name, url);
+    res
+      .status(200)
+      .json({ message: "A new verified link was sent to your email" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 exports.userRegister = async (req, res) => {
   try {
     const {
@@ -90,16 +105,22 @@ exports.loginUser = async (req, res) => {
 
 exports.activateUser = async (req, res) => {
   try {
-    const token = req.body.token.id;
-
+    const token = req.body.token;
     //check if there is any token from body
     if (!token) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
     //verify token
-    const userId = jwt.verify(token, process.env.TOKEN_SECRET).id;
+    const userId = jwt.verify(token, process.env.TOKEN_SECRET);
+    if (new Date() < userId.exp) {
+      return res.status(500).json({
+        message: "Verify link has expired, please click on resend link",
+      });
+    }
+
     //get user by token id
-    const checkUser = await User.findById(userId);
+    const checkUser = await User.findById(userId.id);
+
     //check if user have been verified
     if (checkUser.verified == true) {
       return res
@@ -109,7 +130,7 @@ exports.activateUser = async (req, res) => {
     if (!checkUser) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
-    await User.findByIdAndUpdate(userId, { verified: true });
+    await User.findByIdAndUpdate(userId.id, { verified: true });
     return res.status(200).json({
       message: "Account has beeen activated successfully.",
       id: checkUser._id,
