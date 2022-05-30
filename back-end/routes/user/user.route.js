@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../../controllers/user/user.controller");
 const {
   authTokenCheck,
+  adminCheck,
 } = require("./../../middlewares/authentication/authentication");
 
 router.route("/user_register").post(userController.userRegister);
@@ -17,4 +18,5 @@ router
 router
   .route("/user_resetPassword")
   .post(authTokenCheck, userController.resetPassword);
+router.route("/admin_check").post(authTokenCheck, adminCheck);
 module.exports = router;

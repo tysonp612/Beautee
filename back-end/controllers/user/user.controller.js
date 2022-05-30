@@ -127,14 +127,6 @@ exports.activateUser = async (req, res) => {
     await User.findByIdAndUpdate(user._id, { verified: true, new: true });
     return res.status(200).json({
       message: "Account has beeen activated successfully.",
-      id: checkUser._id,
-      color: checkUser.color,
-      username: checkUser.username,
-      picture: checkUser.picture,
-      first_name: checkUser.first_name,
-      last_name: checkUser.last_name,
-      role: checkUser.role,
-      verified: checkUser.verified,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
