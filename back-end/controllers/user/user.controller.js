@@ -7,12 +7,17 @@ const { sendVerifiedEmail, sendResetPassword } = require("../../helper/mailer");
 
 exports.sendVerifyLink = async (req, res) => {
   try {
+    const { email } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      res.status(400).json({ message: "No user found with this email" });
+    }
     const emailVerificationToken = generateToken(
-      { id: req.user._id.toString() },
+      { id: user._id.toString() },
       "30m"
     );
-    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
-    sendVerifiedEmail(req.user.email, req.user.first_name, url);
+    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}email=${email}`;
+    sendVerifiedEmail(user.email, user.first_name, url);
     res
       .status(200)
       .json({ message: "A new verified link was sent to your email" });
@@ -46,9 +51,8 @@ exports.userRegister = async (req, res) => {
       { id: user._id.toString() },
       "30m"
     );
-    const adjustedEmail = email.split(".")[0];
-    console.log(adjustedEmail);
-    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}/email=${adjustedEmail}`;
+    console.log(email);
+    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}email=${email}`;
     sendVerifiedEmail(user.email, user.first_name, url);
     const token = generateToken({ id: user._id.toString() }, "30d");
     res.status(200).json({

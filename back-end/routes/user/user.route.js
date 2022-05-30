@@ -10,9 +10,7 @@ router.route("/user_login").post(userController.loginUser);
 router
   .route("/user_activate")
   .post(authTokenCheck, userController.activateUser);
-router
-  .route("/authTokenCheck")
-  .post(authTokenCheck, userController.sendVerifyLink);
+router.route("/user_resendVerifyLink").post(userController.sendVerifyLink);
 router
   .route("/user_sendResetPasswordEmail")
   .post(userController.sendResetPasswordEmail);

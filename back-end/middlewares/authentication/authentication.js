@@ -12,21 +12,11 @@ exports.authTokenCheck = async (req, res, next) => {
     if (!token) {
       return res.status(400).json({ message: "Invalid Authentification" });
     }
-    console.log(token);
-    let userId;
-    const userTokenCheck = jwt.verify(
-      token,
-      process.env.TOKEN_SECRET,
-      (err, res) => {
-        if (err) {
-          return res.status(400).json({ message: err.message });
-        }
-        userId = res.id;
-      }
-    );
 
+    let userId;
+    const userTokenCheck = jwt.verify(token, process.env.TOKEN_SECRET);
+    userId = userTokenCheck.id;
     const user = await User.findById(userId);
-    console.log(user);
     if (!user) {
       return res.status(400).json("No user found!");
     }
