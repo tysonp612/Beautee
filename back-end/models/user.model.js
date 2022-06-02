@@ -58,10 +58,14 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    currentCustumer: {
-      type: ObjectId,
-      ref: "Customer",
-    },
+    bookings: [
+      {
+        booking: {
+          type: ObjectId,
+          ref: "Booking",
+        },
+      },
+    ],
     moneyRecord: [
       {
         money: {
