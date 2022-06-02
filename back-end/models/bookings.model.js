@@ -13,7 +13,11 @@ const bookingsSchema = {
       },
       services: [
         {
-          service: { type: ObjectId, ref: "Services" },
+          mainService: { type: ObjectId, ref: "Services" },
+          additionalService: {
+            name: String,
+            price: Number,
+          },
         },
       ],
       paid: {
