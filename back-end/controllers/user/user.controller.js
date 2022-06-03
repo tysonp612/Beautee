@@ -24,6 +24,15 @@ exports.sendVerifyLink = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.adminController = async (req, res) => {
+  try {
+    res.status(200).json(true);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 exports.userRegister = async (req, res) => {
   try {
     const {
@@ -74,7 +83,7 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body.loginCredentials;
     const user = await User.findOne({ email: email.toLowerCase() });
-    console.log(user._id);
+
     if (!user) {
       return res.status(400).json({
         message: "User not found",

@@ -23,11 +23,12 @@ const clientSchema = mongoose.Schema(
       required: [true, "Client's phone number is required"],
       trim: true,
       text: true,
-      unique: true,
+      unique: [true, "This client has already been registered"],
     },
     email: {
       type: String,
       trim: true,
+      unique: [true, "This client has already been registered"],
     },
     bookings: [
       {

@@ -36,10 +36,10 @@ exports.adminCheck = async (req, res, next) => {
       return res.status(400).json({ message: "User not found" });
     }
     if (admin.role === "admin") {
-      return res.status(200).json({ message: "Admin confirm" });
       next();
     }
   } catch (err) {
-    return res.status(500).json({ message: error.message });
+    console.log(err);
+    return res.status(500).json({ message: err.message });
   }
 };

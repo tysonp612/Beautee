@@ -18,5 +18,7 @@ router
 router
   .route("/user_resetPassword")
   .post(authTokenCheck, userController.resetPassword);
-router.route("/admin_check").post(authTokenCheck, adminCheck);
+router
+  .route("/admin_check")
+  .post(authTokenCheck, adminCheck, userController.adminController);
 module.exports = router;
