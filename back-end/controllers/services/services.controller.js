@@ -14,3 +14,12 @@ exports.createService = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.getAllServices = async (req, res) => {
+  try {
+    const services = await Services.find();
+    res.status(200).json({ services: services });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

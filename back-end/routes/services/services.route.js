@@ -11,4 +11,7 @@ router
   .route("/admin_createServices")
   .post(authTokenCheck, adminCheck, servicesController.createService);
 
+router
+  .route("/admin_getAllServices")
+  .post(authTokenCheck, adminCheck, servicesController.getAllServices);
 module.exports = router;
