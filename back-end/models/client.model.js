@@ -22,7 +22,6 @@ const clientSchema = mongoose.Schema(
       type: String,
       required: [true, "Client's phone number is required"],
       trim: true,
-      text: true,
       unique: [true, "This client has already been registered"],
     },
     email: {
