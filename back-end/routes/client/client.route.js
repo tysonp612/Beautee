@@ -8,7 +8,7 @@ const {
 } = require("./../../middlewares/authentication/authentication");
 
 router
-  .route("/admin_createClient")
+  .route("/createClient")
   .post(authTokenCheck, adminCheck, clientController.createClient);
 
 module.exports = router;

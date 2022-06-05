@@ -8,10 +8,8 @@ const {
 } = require("./../../middlewares/authentication/authentication");
 
 router
-  .route("/admin_createServices")
+  .route("/createServices")
   .post(authTokenCheck, adminCheck, servicesController.createService);
 
-router
-  .route("/admin_getAllServices")
-  .post(authTokenCheck, adminCheck, servicesController.getAllServices);
+router.route("/getAllServices").get(servicesController.getAllServices);
 module.exports = router;
