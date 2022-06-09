@@ -41,4 +41,5 @@ const clientSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+clientSchema.index({ number: "text" });
 module.exports = mongoose.model("Client", clientSchema);
