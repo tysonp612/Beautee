@@ -5,7 +5,7 @@ const clientSchema = mongoose.Schema(
     first_name: {
       type: String,
       required: [true, "First name is required"],
-      mminlength: [2, "First name is too short"],
+      minlength: [2, "First name is too short"],
       maxlength: [32, "First name is too long"],
       trim: true,
       text: true,
@@ -22,6 +22,7 @@ const clientSchema = mongoose.Schema(
       type: String,
       required: [true, "Client's phone number is required"],
       trim: true,
+      text: true,
       unique: [true, "This client has already been registered"],
     },
     email: {
@@ -41,5 +42,4 @@ const clientSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-clientSchema.index({ number: "text" });
 module.exports = mongoose.model("Client", clientSchema);

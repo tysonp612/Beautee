@@ -25,15 +25,31 @@ exports.createClient = async (req, res) => {
 exports.findClient = async (req, res) => {
   try {
     const { keyword } = req.body;
-    const client = await Client.find(
-      {
-        $text: { $search: keyword },
-      },
-      (err, doc) => {
-        console.log(err);
-      }
-    );
-    console.log(keyword, client);
+    let client;
+    const terms = keyword.split(" ");
+
+    let regexString = "";
+
+    for (let i = 0; i < terms.length; i++) {
+      regexString += terms[i];
+      if (i < terms.length - 1) regexString += "|";
+    }
+    const re = new RegExp(regexString, "ig");
+
+    const nameCheck = await Client.aggregate()
+      .project({ fullName: { $concat: ["$first_name", " ", "$last_name"] } })
+      .match({
+        fullName: re,
+      });
+    if (nameCheck.length > 0) {
+      console.log("name", nameCheck);
+    } else {
+      const keywordCheck = await Client.find({
+        $or: [{ number: { $regex: keyword } }, { email: { $regex: keyword } }],
+      });
+      console.log("keyword", keywordCheck);
+    }
+
     if (client) {
       return res.status(200).json({ client: client });
     } else {

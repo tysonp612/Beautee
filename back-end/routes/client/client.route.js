@@ -11,7 +11,5 @@ router
   .route("/createClient")
   .post(authTokenCheck, adminCheck, clientController.createClient);
 
-router
-  .route("/findClient")
-  .post(authTokenCheck, adminCheck, clientController.findClient);
+router.route("/findClient").post(authTokenCheck, clientController.findClient);
 module.exports = router;
