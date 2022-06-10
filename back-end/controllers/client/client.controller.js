@@ -41,19 +41,21 @@ exports.findClient = async (req, res) => {
       .match({
         fullName: re,
       });
+    console.log(nameCheck, nameCheck.length);
     if (nameCheck.length > 0) {
-      console.log("name", nameCheck);
+      const clientData = await Client.populate(nameCheck, { path: "_id" });
+      client = clientData;
     } else {
       const keywordCheck = await Client.find({
         $or: [{ number: { $regex: keyword } }, { email: { $regex: keyword } }],
       });
-      console.log("keyword", keywordCheck);
+      client = keywordCheck;
     }
-
-    if (client) {
-      return res.status(200).json({ client: client });
+    if (client.length > 0) {
+      res.status(200).json({ client });
     } else {
-      return res.status(500).json({ message: "No client found" });
+      client = null;
+      res.status(200).json({ client, message: "No client found" });
     }
   } catch (err) {
     console.log(err);
