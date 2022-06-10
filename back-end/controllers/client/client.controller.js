@@ -52,6 +52,7 @@ exports.findClient = async (req, res) => {
       client = keywordCheck;
     }
     if (client.length > 0) {
+      console.log(client);
       res.status(200).json({ client });
     } else {
       client = null;
