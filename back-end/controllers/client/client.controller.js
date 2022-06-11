@@ -41,10 +41,10 @@ exports.findClient = async (req, res) => {
       .match({
         fullName: re,
       });
-    console.log(nameCheck, nameCheck.length);
     if (nameCheck.length > 0) {
       const clientData = await Client.populate(nameCheck, { path: "_id" });
-      client = clientData;
+      const newClientData = clientData.map((data) => data._id);
+      client = newClientData;
     } else {
       const keywordCheck = await Client.find({
         $or: [{ number: { $regex: keyword } }, { email: { $regex: keyword } }],
@@ -52,7 +52,6 @@ exports.findClient = async (req, res) => {
       client = keywordCheck;
     }
     if (client.length > 0) {
-      console.log(client);
       res.status(200).json({ client });
     } else {
       client = null;
