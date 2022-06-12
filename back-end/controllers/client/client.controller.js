@@ -11,6 +11,7 @@ exports.createClient = async (req, res) => {
     }).save();
 
     res.status(200).json({
+      id: newClient._id,
       first_name: newClient.first_name,
       last_name: newClient.last_name,
       number: newClient.number,
@@ -18,7 +19,6 @@ exports.createClient = async (req, res) => {
       message: "New client created successfully",
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
