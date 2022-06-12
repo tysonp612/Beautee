@@ -18,6 +18,7 @@ exports.createClient = async (req, res) => {
       message: "New client created successfully",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -58,7 +59,6 @@ exports.findClient = async (req, res) => {
       res.status(200).json({ client, message: "No client found" });
     }
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };

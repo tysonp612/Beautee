@@ -28,6 +28,7 @@ const clientSchema = mongoose.Schema(
     email: {
       type: String,
       trim: true,
+      sparse: true,
       unique: [true, "This client has already been registered"],
     },
     bookings: [
