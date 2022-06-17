@@ -1,4 +1,4 @@
-const Booking = require("./../../models/bookings.model");
+const Bookings = require("./../../models/bookings.model");
 
 exports.createBooking = async (req, res) => {
   try {
@@ -8,20 +8,21 @@ exports.createBooking = async (req, res) => {
       date,
       time,
       period,
-      services,
+      service,
       price,
       note,
     } = req.body.bookingData;
-    const servicesArr = services.map((service) => service._id);
-    const booking = await new Boookings({
+    const servicesArr = service.map((s) => s._id);
+    console.log(servicesArr);
+    const booking = await new Bookings({
       client,
       user: worker,
       date,
-      services: servicesArr,
+      services: { mainService: servicesArr },
       price: { estimatedPrice: price },
       timeOfBooking: time,
       note,
-    });
+    }).save();
     res.status(200).json(booking);
   } catch (err) {
     console.log(err);

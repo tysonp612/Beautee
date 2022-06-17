@@ -9,4 +9,4 @@ const {
 
 router.route("/booking_createBooking").post(bookingController.createBooking);
 
-module.exports.router;
+module.exports = router;
