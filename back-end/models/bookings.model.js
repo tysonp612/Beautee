@@ -11,6 +11,9 @@ const bookingsSchema = {
         type: ObjectId,
         ref: "User",
       },
+      date: {
+        type: Date,
+      },
       services: [
         {
           mainService: { type: ObjectId, ref: "Services" },
@@ -20,11 +23,11 @@ const bookingsSchema = {
           },
         },
       ],
-      paid: {
-        actualPrice: {
+      price: {
+        estimatedPrice: {
           type: Number,
         },
-        tip: {
+        adjustedPrice: {
           type: Number,
         },
       },
