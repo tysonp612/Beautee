@@ -28,3 +28,24 @@ exports.createBooking = async (req, res) => {
     console.log(err);
   }
 };
+
+exports.getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Bookings.find()
+      .populate({
+        path: "client",
+        select: "first_name last_name number",
+      })
+      .populate({
+        path: "user",
+        select: "username color",
+      })
+      .populate({
+        path: "services.mainService",
+        select: "service",
+      });
+    res.status(200).json(bookings);
+  } catch (err) {
+    console.log(err);
+  }
+};

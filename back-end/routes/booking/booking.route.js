@@ -7,6 +7,10 @@ const {
   adminCheck,
 } = require("./../../middlewares/authentication/authentication");
 
-router.route("/booking_createBooking").post(bookingController.createBooking);
-
+router
+  .route("/booking_createBooking")
+  .post(authTokenCheck, adminCheck, bookingController.createBooking);
+router
+  .route("/booking_getAllBookings")
+  .get(authTokenCheck, adminCheck, bookingController.getAllBookings);
 module.exports = router;
