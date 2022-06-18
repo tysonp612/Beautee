@@ -12,5 +12,5 @@ router
   .post(authTokenCheck, adminCheck, bookingController.createBooking);
 router
   .route("/booking_getAllBookings")
-  .get(authTokenCheck, adminCheck, bookingController.getAllBookings);
+  .post(authTokenCheck, adminCheck, bookingController.getAllBookings);
 module.exports = router;

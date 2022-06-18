@@ -31,7 +31,9 @@ exports.createBooking = async (req, res) => {
 
 exports.getAllBookings = async (req, res) => {
   try {
-    const bookings = await Bookings.find()
+    const { date } = req.body;
+    console.log(date);
+    const bookings = await Bookings.find({ date })
       .populate({
         path: "client",
         select: "first_name last_name number",
