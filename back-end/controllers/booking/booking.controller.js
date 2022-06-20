@@ -18,6 +18,7 @@ exports.createBooking = async (req, res) => {
       client,
       user: worker,
       date,
+      period,
       services: { mainService: servicesArr },
       price: { estimatedPrice: price },
       timeOfBooking: time,

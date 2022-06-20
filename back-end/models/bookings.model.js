@@ -29,7 +29,10 @@ const bookingsSchema = {
     },
   },
   timeOfBooking: {
-    type: String,
+    type: Number,
+  },
+  period: {
+    type: Number,
   },
   note: {
     type: String,
