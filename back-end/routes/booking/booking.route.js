@@ -13,4 +13,10 @@ router
 router
   .route("/booking_getAllBookings")
   .post(authTokenCheck, adminCheck, bookingController.getAllBookings);
+router
+  .route("/booking_deleteBooking")
+  .post(authTokenCheck, adminCheck, bookingController.deleteBooking);
+router
+  .route("/booking_updateBooking")
+  .post(authTokenCheck, adminCheck, bookingController.updateBooking);
 module.exports = router;

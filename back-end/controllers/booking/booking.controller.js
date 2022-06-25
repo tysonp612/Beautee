@@ -1,3 +1,4 @@
+const { findByIdAndDelete } = require("./../../models/bookings.model");
 const Bookings = require("./../../models/bookings.model");
 
 exports.createBooking = async (req, res) => {
@@ -13,7 +14,7 @@ exports.createBooking = async (req, res) => {
       note,
     } = req.body.bookingData;
     const servicesArr = service.map((s) => s._id);
-    console.log(servicesArr);
+
     const booking = await new Bookings({
       client,
       user: worker,
@@ -33,7 +34,6 @@ exports.createBooking = async (req, res) => {
 exports.getAllBookings = async (req, res) => {
   try {
     const { date } = req.body;
-    console.log(date);
     const bookings = await Bookings.find({ date })
       .populate({
         path: "client",
@@ -48,6 +48,49 @@ exports.getAllBookings = async (req, res) => {
         select: "service",
       });
     res.status(200).json(bookings);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.deleteBooking = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const deleteBooking = await Booking.findByIdAndDelete(id);
+    res.status(200).json(null);
+  } catch (err) {
+    console.log(err);
+  }
+};
+exports.updateBooking = async (req, res) => {
+  try {
+    const {
+      id,
+      client,
+      worker,
+      date,
+      time,
+      period,
+      service,
+      price,
+      note,
+    } = req.body;
+    const servicesArr = service.map((s) => s._id);
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      { id },
+      {
+        client,
+        user: worker,
+        date,
+        time,
+        period,
+        services: { mainService: servicesArr },
+        price: { estimatedPrice: price },
+        note,
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedBooking);
   } catch (err) {
     console.log(err);
   }
