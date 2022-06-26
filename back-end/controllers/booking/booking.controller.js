@@ -65,7 +65,19 @@ exports.deleteBooking = async (req, res) => {
 exports.getOneBooking = async (req, res) => {
   try {
     const { id } = req.body;
-    const booking = await Booking.findById({ id });
+    const booking = await Bookings.findById(id)
+      .populate({
+        path: "client",
+        select: "first_name last_name number",
+      })
+      .populate({
+        path: "user",
+        select: "username color",
+      })
+      .populate({
+        path: "services.mainService",
+        select: "service",
+      });
     res.status(200).json(booking);
   } catch (err) {
     console.log(err);
