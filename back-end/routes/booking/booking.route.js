@@ -19,4 +19,7 @@ router
 router
   .route("/booking_updateBooking")
   .post(authTokenCheck, adminCheck, bookingController.updateBooking);
+router
+  .route("/booking_getOneBooking")
+  .post(authTokenCheck, adminCheck, bookingController.getOneBooking);
 module.exports = router;

@@ -56,9 +56,17 @@ exports.getAllBookings = async (req, res) => {
 exports.deleteBooking = async (req, res) => {
   try {
     const { id } = req.body;
-    console.log(id);
     const deleteBooking = await Bookings.findByIdAndDelete(id);
     res.status(200).json(null);
+  } catch (err) {
+    console.log(err);
+  }
+};
+exports.getOneBooking = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const booking = await Booking.findById({ id });
+    res.status(200).json(booking);
   } catch (err) {
     console.log(err);
   }
