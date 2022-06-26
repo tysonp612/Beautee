@@ -56,7 +56,8 @@ exports.getAllBookings = async (req, res) => {
 exports.deleteBooking = async (req, res) => {
   try {
     const { id } = req.body;
-    const deleteBooking = await Booking.findByIdAndDelete(id);
+    console.log(id);
+    const deleteBooking = await Bookings.findByIdAndDelete(id);
     res.status(200).json(null);
   } catch (err) {
     console.log(err);
@@ -76,7 +77,7 @@ exports.updateBooking = async (req, res) => {
       note,
     } = req.body;
     const servicesArr = service.map((s) => s._id);
-    const updatedBooking = await Booking.findByIdAndUpdate(
+    const updatedBooking = await Bookings.findByIdAndUpdate(
       { id },
       {
         client,
