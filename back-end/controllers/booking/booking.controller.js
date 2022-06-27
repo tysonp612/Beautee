@@ -76,7 +76,7 @@ exports.getOneBooking = async (req, res) => {
       })
       .populate({
         path: "services.mainService",
-        select: "service",
+        select: "service price",
       });
     res.status(200).json(booking);
   } catch (err) {
