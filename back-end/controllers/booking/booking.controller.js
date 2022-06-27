@@ -95,10 +95,10 @@ exports.updateBooking = async (req, res) => {
       service,
       price,
       note,
-    } = req.body;
+    } = req.body.bookingData;
     const servicesArr = service.map((s) => s._id);
     const updatedBooking = await Bookings.findByIdAndUpdate(
-      { id },
+      id,
       {
         client,
         user: worker,
