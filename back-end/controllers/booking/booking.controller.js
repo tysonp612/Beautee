@@ -104,7 +104,7 @@ exports.updateBooking = async (req, res) => {
         client,
         user: worker,
         date,
-        time,
+        timeOfBooking: time,
         period,
         services: { mainService: servicesArr },
         price: { estimatedPrice: price },
