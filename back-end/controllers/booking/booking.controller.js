@@ -25,6 +25,7 @@ exports.createBooking = async (req, res) => {
       timeOfBooking: time,
       note,
     }).save();
+
     res.status(200).json(booking);
   } catch (err) {
     console.log(err);

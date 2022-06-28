@@ -37,6 +37,11 @@ const bookingsSchema = {
   note: {
     type: String,
   },
+  status: {
+    type: String,
+    enum: ["Processing", "Finished"],
+    default: "Processing",
+  },
 };
 
 module.exports = mongoose.model("Bookings", bookingsSchema);
