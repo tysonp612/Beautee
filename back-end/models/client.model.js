@@ -29,7 +29,8 @@ const clientSchema = mongoose.Schema(
       type: String,
       trim: true,
       sparse: true,
-      unique: [true, "This client has already been registered"],
+      index: true,
+      unique: true,
     },
     bookings: [
       {

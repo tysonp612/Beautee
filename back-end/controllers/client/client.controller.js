@@ -15,7 +15,7 @@ exports.createClient = async (req, res) => {
       first_name: newClient.first_name,
       last_name: newClient.last_name,
       number: newClient.number,
-      email: newClient.email,
+      email,
       message: "New client created successfully",
     });
   } catch (err) {

@@ -1,6 +1,6 @@
 const { findByIdAndDelete } = require("./../../models/bookings.model");
 const Bookings = require("./../../models/bookings.model");
-
+const Client = require("./../../models/client.model");
 exports.createBooking = async (req, res) => {
   try {
     const {
