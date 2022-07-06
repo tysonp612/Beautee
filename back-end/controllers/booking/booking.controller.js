@@ -117,3 +117,13 @@ exports.updateBooking = async (req, res) => {
     console.log(err);
   }
 };
+
+exports.loadUserBookings = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const bookings = await Bookings.find({ user: id });
+    res.status(200).json(bookings);
+  } catch (err) {
+    console.log(err);
+  }
+};
