@@ -22,4 +22,7 @@ router
 router
   .route("/booking_getOneBooking")
   .post(authTokenCheck, adminCheck, bookingController.getOneBooking);
+router
+  .route("/booking_loadUserBookings")
+  .post(authTokenCheck, bookingController.loadUserBookings);
 module.exports = router;
