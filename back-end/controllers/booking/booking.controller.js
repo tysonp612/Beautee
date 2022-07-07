@@ -98,6 +98,8 @@ exports.updateBooking = async (req, res) => {
       note,
     } = req.body.bookingData;
     const servicesArr = service.map((s) => s._id);
+    console.log(price);
+
     const updatedBooking = await Bookings.findByIdAndUpdate(
       id,
       {
