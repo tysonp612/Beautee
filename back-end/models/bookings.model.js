@@ -45,3 +45,4 @@ const bookingsSchema = {
 };
 
 module.exports = mongoose.model("Bookings", bookingsSchema);
+``;
