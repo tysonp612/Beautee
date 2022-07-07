@@ -123,7 +123,20 @@ exports.updateBooking = async (req, res) => {
 exports.loadUserBookings = async (req, res) => {
   try {
     const { id } = req.body;
-    const bookings = await Bookings.find({ user: id });
+    const { date } = req.body;
+    const bookings = await Bookings.find({ user: id, date })
+      .populate({
+        path: "client",
+        select: "first_name last_name number",
+      })
+      .populate({
+        path: "user",
+        select: "username color",
+      })
+      .populate({
+        path: "services.mainService",
+        select: "service",
+      });
     res.status(200).json(bookings);
   } catch (err) {
     console.log(err);
