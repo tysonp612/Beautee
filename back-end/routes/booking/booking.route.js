@@ -21,7 +21,7 @@ router
   .post(authTokenCheck, adminCheck, bookingController.updateBooking);
 router
   .route("/booking_getOneBooking")
-  .post(authTokenCheck, adminCheck, bookingController.getOneBooking);
+  .post(authTokenCheck, bookingController.getOneBooking);
 router
   .route("/booking_loadUserBookings")
   .post(authTokenCheck, bookingController.loadUserBookings);
