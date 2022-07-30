@@ -9,11 +9,11 @@ exports.createBooking = async (req, res) => {
       date,
       time,
       period,
-      service,
+      services,
       price,
       note,
     } = req.body.bookingData;
-    const servicesArr = service.map((s) => s._id);
+    const servicesArr = services.map((s) => s._id);
 
     const booking = await new Bookings({
       client,
@@ -93,12 +93,11 @@ exports.updateBooking = async (req, res) => {
       date,
       time,
       period,
-      service,
+      services,
       price,
       note,
     } = req.body.bookingData;
-    const servicesArr = service.map((s) => s._id);
-    console.log(price);
+    const servicesArr = services.map((s) => s._id);
 
     const updatedBooking = await Bookings.findByIdAndUpdate(
       id,
