@@ -142,10 +142,10 @@ exports.loadUserBookings = async (req, res) => {
   }
 };
 
-exports.userUpdate = async (req, res) => {
+exports.userUpdateBooking = async (req, res) => {
   try {
     const { id } = req.body;
-    const { period, services, price } = req.body.bookingData;
+    const { period, services, price } = req.body;
     const servicesArr = services.map((s) => s._id);
     const updatedBooking = await Bookings.findByIdAndUpdate(
       id,

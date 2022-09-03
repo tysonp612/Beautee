@@ -26,6 +26,6 @@ router
   .route("/booking_loadUserBookings")
   .post(authTokenCheck, bookingController.loadUserBookings);
 router
-  .route("/booking_userUpdate")
-  .post(authTokenCheck, bookingController.userUpdate);
+  .route("/booking_userUpdateBooking")
+  .post(authTokenCheck, bookingController.userUpdateBooking);
 module.exports = router;
