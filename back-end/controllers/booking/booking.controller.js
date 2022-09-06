@@ -78,6 +78,10 @@ exports.getOneBooking = async (req, res) => {
       .populate({
         path: "services.mainService",
         select: "service price",
+      })
+      .populate({
+        path: "services.actualService",
+        select: "service price",
       });
     res.status(200).json(booking);
   } catch (err) {
@@ -144,21 +148,19 @@ exports.loadUserBookings = async (req, res) => {
 
 exports.userUpdateBooking = async (req, res) => {
   try {
-    const { id, type, value } = req.body;
+    const { id, type, value, value2 } = req.body;
 
     if (type === "servicesUpdate" && value.length > 0) {
       const servicesArr = value.map((s) => {
         return s._id;
       });
-      console.log(servicesArr, value);
-      // const updatedBooking = await Bookings.findByIdAndUpdate(
-      //   id,
-      //   {
-      //     services: { actualService: servicesArr },
-      //   },
-      //   { new: true }
-      // );
-      res.status(200).json("Booking services updated successfully!");
+      const oldServicesArr = value2.map((s2) => {
+        return s2._id;
+      });
+      const updatedBooking = await Bookings.findByIdAndUpdate(id, {
+        services: { actualService: servicesArr, mainService: oldServicesArr },
+      });
+      res.status(200).json(updatedBooking);
     } else if (type === "periodUpdate") {
       const bookingPeriodUpdate = await Bookings.findByIdAndUpdate(
         id,
