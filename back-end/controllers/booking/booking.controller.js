@@ -148,17 +148,22 @@ exports.loadUserBookings = async (req, res) => {
 
 exports.userUpdateBooking = async (req, res) => {
   try {
-    const { id, type, value, value2 } = req.body;
+    const { id, type, value } = req.body;
 
     if (type === "servicesUpdate" && value.length > 0) {
       const servicesArr = value.map((s) => {
         return s._id;
       });
-      const oldServicesArr = value2.map((s2) => {
-        return s2._id;
-      });
-      const updatedBooking = await Bookings.findByIdAndUpdate(id, {
-        services: { actualService: servicesArr, mainService: oldServicesArr },
+      console.log(servicesArr);
+      const updatedBooking = await Bookings.findByIdAndUpdate(
+        id,
+        {
+          services: { mainService: servicesArr },
+        },
+        { new: true }
+      ).populate({
+        path: "services.mainService",
+        select: "service price",
       });
       res.status(200).json(updatedBooking);
     } else if (type === "periodUpdate") {
