@@ -144,6 +144,10 @@ exports.loadUserBookings = async (req, res) => {
       .populate({
         path: "services.mainService",
         select: "service",
+      })
+      .populate({
+        path: "services.actualService",
+        select: "service",
       });
     res.status(200).json(bookings);
   } catch (err) {
@@ -188,8 +192,18 @@ exports.userUpdateBooking = async (req, res) => {
         },
         { new: true }
       );
-      console.log(bookingPriceUpdate);
+
       res.status(200).json(bookingPriceUpdate.price.actualPrice);
+    } else if (type === "addMessages") {
+      const bookingMessagesUpdate = await Bookings.findByIdAndUpdate(
+        id,
+        {
+          technicianMessages: value,
+        },
+        { new: true }
+      );
+      console.log(bookingMessagesUpdate);
+      // res.status(200).json(bookingPriceUpdate.price.actualPrice);
     }
   } catch (err) {
     console.log(err);

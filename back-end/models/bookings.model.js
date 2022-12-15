@@ -25,6 +25,9 @@ const bookingsSchema = {
       type: Number,
     },
   },
+  technicianMessages: {
+    message: [{ type: String }],
+  },
   timeOfBooking: {
     type: Number,
   },
