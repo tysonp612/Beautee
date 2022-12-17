@@ -39,7 +39,7 @@ const bookingsSchema = {
   },
   status: {
     type: String,
-    enum: ["Processing", "Finished"],
+    enum: ["Processing", "Ready", "Finished"],
     default: "Processing",
   },
 };
