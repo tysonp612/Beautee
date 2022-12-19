@@ -210,3 +210,23 @@ exports.userUpdateBooking = async (req, res) => {
     console.log(err);
   }
 };
+
+exports.sendBookingToAdmin = async (req, res) => {
+  try {
+    const { id, period, services, price, messages } = req.body.bookingData;
+    const servicesArr = services.map((s) => s._id);
+    const updateFinalBookingToSend = await Bookings.findByIdAndUpdate(
+      id,
+      {
+        period,
+        services: { actualService: servicesArr },
+        price: { actualPrice: price },
+        technicianMessages: messages,
+      },
+      { new: true }
+    );
+    res.status(200).json(updateFinalBookingToSend);
+  } catch (err) {
+    console.log(err);
+  }
+};

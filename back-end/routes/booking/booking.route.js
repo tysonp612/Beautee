@@ -28,4 +28,7 @@ router
 router
   .route("/booking_userUpdateBooking")
   .post(authTokenCheck, bookingController.userUpdateBooking);
+router
+  .route("/booking_sendBookingToAdmin")
+  .post(authTokenCheck, bookingController.sendBookingToAdmin);
 module.exports = router;
