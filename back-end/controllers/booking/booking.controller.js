@@ -87,6 +87,7 @@ exports.getOneBooking = async (req, res) => {
         path: "services.actualService",
         select: "service price",
       });
+
     res.status(200).json(booking);
   } catch (err) {
     console.log(err);
@@ -198,12 +199,12 @@ exports.userUpdateBooking = async (req, res) => {
       const bookingMessagesUpdate = await Bookings.findByIdAndUpdate(
         id,
         {
-          technicianMessages: value,
+          $push: { technicianMessages: value },
         },
         { new: true }
       );
-      console.log(bookingMessagesUpdate);
-      // res.status(200).json(bookingPriceUpdate.price.actualPrice);
+
+      res.status(200).json(bookingMessagesUpdate.technicianMessages);
     }
   } catch (err) {
     console.log(err);
