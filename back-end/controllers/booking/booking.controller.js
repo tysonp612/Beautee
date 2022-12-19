@@ -213,19 +213,28 @@ exports.userUpdateBooking = async (req, res) => {
 
 exports.sendBookingToAdmin = async (req, res) => {
   try {
-    const { id, period, services, price, messages } = req.body.bookingData;
-    const servicesArr = services.map((s) => s._id);
+    const { id } = req.body;
+    const {
+      finalPeriod,
+      finalServices,
+      finalPrice,
+      finalMessages,
+      initialServices,
+    } = req.body.data;
+
+    const servicesArr = finalServices.map((s) => s._id);
     const updateFinalBookingToSend = await Bookings.findByIdAndUpdate(
       id,
       {
-        period,
-        services: { actualService: servicesArr },
-        price: { actualPrice: price },
-        technicianMessages: messages,
+        period: finalPeriod,
+        status: "Ready",
+        services: { actualService: servicesArr, mainService: initialServices },
+        price: { actualPrice: finalPrice },
+        technicianMessages: finalMessages,
       },
       { new: true }
     );
-    res.status(200).json(updateFinalBookingToSend);
+    res.status(200).json("Booking sent");
   } catch (err) {
     console.log(err);
   }
