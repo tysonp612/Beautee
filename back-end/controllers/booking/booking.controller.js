@@ -205,6 +205,16 @@ exports.userUpdateBooking = async (req, res) => {
       );
 
       res.status(200).json(bookingMessagesUpdate.technicianMessages);
+    } else if (type === "calculatingPayingTotal") {
+      const bookingUpdatePayingTotal = await Bookings.findByIdAndUpdate(
+        id,
+        {
+          totalPayment: value,
+        },
+        { new: true }
+      );
+
+      res.status(200).json(bookingUpdatePayingTotal.totalPayment);
     }
   } catch (err) {
     console.log(err);

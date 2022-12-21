@@ -40,6 +40,9 @@ const bookingsSchema = {
     enum: ["Processing", "Ready", "Finished"],
     default: "Processing",
   },
+  totalPayment: {
+    type: Number,
+  },
 };
 
 module.exports = mongoose.model("Bookings", bookingsSchema);
