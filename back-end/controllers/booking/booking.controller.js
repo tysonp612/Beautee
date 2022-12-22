@@ -249,3 +249,19 @@ exports.sendBookingToAdmin = async (req, res) => {
     console.log(err);
   }
 };
+
+exports.closeBooking = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const closeBooking = await Bookings.findByIdAndUpdate(
+      id,
+      {
+        status: "Finished",
+      },
+      { new: true }
+    );
+    res.status(200).json("Booking is closed");
+  } catch (err) {
+    console.log(err);
+  }
+};

@@ -31,4 +31,8 @@ router
 router
   .route("/booking_sendBookingToAdmin")
   .post(authTokenCheck, bookingController.sendBookingToAdmin);
+
+router
+  .route("/booking_closeBooking")
+  .post(authTokenCheck, adminCheck, bookingController.closeBooking);
 module.exports = router;
