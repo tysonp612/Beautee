@@ -8,5 +8,7 @@ const {
 } = require("../../middlewares/authentication/authentication");
 
 router.route("/getAllUsers").get(userController.getAllUsers);
-
+router
+  .route("/updateTipAndWage")
+  .post(authTokenCheck, adminCheck, userController.updateTipAndWage);
 module.exports = router;

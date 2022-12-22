@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema;
 
 const salonSchema = mongoose.Schema({
-  bookings: [
+  finishedBookings: [
     {
       booking: {
         type: ObjectId,

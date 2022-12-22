@@ -58,27 +58,14 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    bookings: [
+
+    finishedBookings: [
       {
-        booking: {
-          type: ObjectId,
-          ref: "Booking",
-        },
+        type: ObjectId,
+        ref: "Booking",
       },
     ],
-    moneyRecord: [
-      {
-        money: {
-          type: Number,
-        },
-        tip: {
-          type: Number,
-        },
-        date: {
-          type: String,
-        },
-      },
-    ],
+
     dailyRecord: [
       {
         money: {
@@ -89,6 +76,10 @@ const userSchema = mongoose.Schema(
         },
         date: {
           type: String,
+        },
+        booking: {
+          type: ObjectId,
+          ref: "Booking",
         },
       },
     ],
