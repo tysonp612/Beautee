@@ -11,4 +11,7 @@ router.route("/getAllUsers").get(userController.getAllUsers);
 router
   .route("/updateTipAndWage")
   .post(authTokenCheck, adminCheck, userController.updateTipAndWage);
+router
+  .route("/calculateTotalMoney")
+  .post(authTokenCheck, userController.calculateTotalMoney);
 module.exports = router;

@@ -1,5 +1,5 @@
 const User = require("./../../models/user.model");
-const Booking = require("./../../models/bookings.model");
+const Bookings = require("./../../models/bookings.model");
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -49,9 +49,12 @@ exports.updateTipAndWage = async (req, res) => {
   }
 };
 
-const calculateTotalMoney = async (id, propDate) => {
+exports.calculateTotalMoney = async (req, res) => {
+  //0.Extract id and date from req.body
+  const { userId } = req.body;
+  const propDate = req.body.date;
   //1.Find the user with passed id
-  const user = await User.findById(id);
+  const user = await User.findById(userId);
   let sumMoney = 0;
   let sumTip = 0;
   //4. take the array from step 3, then loop throught it, find the money property then add up
@@ -81,8 +84,34 @@ const calculateTotalMoney = async (id, propDate) => {
   }
 };
 
+//get all finished bookings as technician requires
+const getFinishedBookingsTechnician = async (req, res) => {
+  //0.get user id from req.body
+  const { userId } = req.body;
+  //1. get all bookings with user === userId, then send back to FE
+  const bookings = await Bookings.find({ user: userId, status: "Finished" })
+    .populate({
+      path: "client",
+      select: "first_name last_name",
+    })
+    .populate({
+      path: "user",
+      select: "username color",
+    })
+    .populate({
+      path: "services.mainService",
+      select: "service",
+    })
+    .populate({
+      path: "services.actualService",
+      select: "service",
+    })
+    .sort({ date: -1 });
+  res.status(200).json(bookings);
+};
 // calculateTotalMoney("629a52f3cf6f57d2bd949a06", [
 //   "Thu Dec 22 2022",
 //   "Fri Dec 23 2022",
 // ]);
 // calculateTotalMoney("629a52f3cf6f57d2bd949a06", "Fri Dec 23 2022");
+// getFinishedBookingsTechnician("629a52f3cf6f57d2bd949a06");
