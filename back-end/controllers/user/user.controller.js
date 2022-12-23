@@ -48,3 +48,41 @@ exports.updateTipAndWage = async (req, res) => {
     console.log(err);
   }
 };
+
+const calculateTotalMoney = async (id, propDate) => {
+  //1.Find the user with passed id
+  const user = await User.findById(id);
+  let sumMoney = 0;
+  let sumTip = 0;
+  //4. take the array from step 3, then loop throught it, find the money property then add up
+  //This function will take an array of transactions in passed day and calculate the sum of tip and money
+  const sumTotalByDate = (arr) => {
+    arr.forEach((el) => {
+      sumMoney += el.money;
+      sumTip += el.tip;
+    });
+  };
+  //3.with the date (type string) passed in, it will look at the user.dailyRecord array, and filter the array with the date given
+  const filterByDate = (dateToFind) => {
+    const dailyRecordArr = user.dailyRecord.filter((el) => {
+      return el.date.includes(dateToFind);
+    });
+    //pass the object to step 4
+    sumTotalByDate(dailyRecordArr);
+  };
+  //2.check the prop dates, if they are type of array or not
+  if (Array.isArray(propDate)) {
+    //iff it is an array, loop through and for each of them send the date to filterByDate
+    const filterDateArr = propDate.forEach((el) => filterByDate(el));
+    res.status(200).json({ totalMoney: sumMoney, totalTip: sumTip });
+  } else {
+    filterByDate(propDate);
+    res.status(200).json({ totalMoney: sumMoney, totalTip: sumTip });
+  }
+};
+
+// calculateTotalMoney("629a52f3cf6f57d2bd949a06", [
+//   "Thu Dec 22 2022",
+//   "Fri Dec 23 2022",
+// ]);
+// calculateTotalMoney("629a52f3cf6f57d2bd949a06", "Fri Dec 23 2022");
