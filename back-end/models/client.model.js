@@ -34,10 +34,8 @@ const clientSchema = mongoose.Schema(
     },
     bookings: [
       {
-        booking: {
-          type: ObjectId,
-          ref: "Booking",
-        },
+        type: ObjectId,
+        ref: "Booking",
       },
     ],
   },

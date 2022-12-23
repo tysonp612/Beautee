@@ -14,4 +14,7 @@ router
 router
   .route("/calculateTotalMoney")
   .post(authTokenCheck, userController.calculateTotalMoney);
+router
+  .route("/getFinishedBookingsTechnician")
+  .post(authTokenCheck, userController.getFinishedBookingsTechnician);
 module.exports = router;

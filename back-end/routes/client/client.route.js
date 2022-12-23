@@ -12,4 +12,16 @@ router
   .post(authTokenCheck, adminCheck, clientController.createClient);
 
 router.route("/findClient").post(authTokenCheck, clientController.findClient);
+
+router
+  .route("/updateBookingForClient")
+  .post(authTokenCheck, adminCheck, clientController.updateBookingForClient);
+
+router
+  .route("/getAllFinshiedBookingsForClient")
+  .post(
+    authTokenCheck,
+    adminCheck,
+    clientController.getAllFinshiedBookingsForClient
+  );
 module.exports = router;

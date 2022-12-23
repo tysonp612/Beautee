@@ -85,7 +85,7 @@ exports.calculateTotalMoney = async (req, res) => {
 };
 
 //get all finished bookings as technician requires
-const getFinishedBookingsTechnician = async (req, res) => {
+exports.getFinishedBookingsTechnician = async (req, res) => {
   //0.get user id from req.body
   const { userId } = req.body;
   //1. get all bookings with user === userId, then send back to FE

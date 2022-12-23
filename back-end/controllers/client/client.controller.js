@@ -1,5 +1,5 @@
 const Client = require("./../../models/client.model");
-
+const Bookings = require("./../../models/bookings.model");
 exports.createClient = async (req, res) => {
   try {
     const { first_name, last_name, number, email } = req.body.clientData;
@@ -61,4 +61,73 @@ exports.findClient = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+};
+
+exports.updateBookingForClient = async (req, res) => {
+  //0. get client id and booking id from req.body
+  const { clientId, bookingId } = req.body;
+  //1. query client and push bookingId
+  const addBookings = await Client.findByIdAndUpdate(clientId, {
+    $push: { bookings: bookingId },
+  });
+  console.log(addBookings);
+  res.status(200).json("Finished bookings added to client successfully");
+};
+
+exports.getAllFinshiedBookingsForClient = async (req, res) => {
+  //0. get clientid
+  const { clientId } = req.body;
+  //1. get all bookings with clientId
+
+  const allClientFinishedBookings = await Bookings.find(
+    { client: clientId },
+    { status: "Finished" }
+  )
+    .populate({
+      path: "client",
+      select: "first_name last_name number",
+    })
+    .populate({
+      path: "user",
+      select: "username color",
+    })
+    .populate({
+      path: "services.mainService",
+      select: "service",
+    })
+    .populate({
+      path: "services.actualService",
+      select: "service",
+    })
+    .populate({
+      path: "date",
+      select: "date",
+    })
+    .populate({
+      path: "price.estimatedPrice",
+      select: "price.estimatedPrice",
+    })
+    .populate({
+      path: "price.actualPrice",
+      select: "price.actualPrice",
+    })
+    .populate({
+      path: "technicianMessages",
+      select: "technicianMessages",
+    })
+    .populate({
+      path: "note",
+      select: "note",
+    })
+    .populate({
+      path: "totalPayment",
+      select: "totalPayment",
+    })
+    .populate({
+      path: "timeOfBooking",
+      select: "timeOfBooking",
+    })
+    .sort({ date: -1 });
+  console.log(allClientFinishedBookings);
+  res.status(200).json(allClientFinishedBookings);
 };
