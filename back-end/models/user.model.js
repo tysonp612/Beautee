@@ -4,8 +4,8 @@ const userSchema = mongoose.Schema(
   {
     first_name: {
       type: String,
-      required: [true, "frist name is required"],
-      mminlength: [2, "First name is too short"],
+      required: [true, "Frist name is required"],
+      minlength: [2, "First name is too short"],
       maxlength: [32, "First name is too long"],
       trim: true,
       text: true,
@@ -23,8 +23,8 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Username is required"],
       trim: true,
-      minlength: [2, "User name is too short"],
-      maxlength: [32, "User name is too long"],
+      minlength: [2, "Username is too short"],
+      maxlength: [32, "Username is too long"],
       text: true,
       unique: true,
     },

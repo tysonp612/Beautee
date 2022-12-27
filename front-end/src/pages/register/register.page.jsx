@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
+//import Navigate for navigating user to login page
+import { useNavigate } from "react-router-dom";
 //color wheel
 import { HexColorPicker } from "react-colorful";
 //toast
 import { toast } from "react-toastify";
 //css
 import "./register.page.css";
-//helper function
-import { checkLength } from "./../../helper/check-length";
 //axios
 import { userRegister } from "./../../utils/authentication/authentication.utils";
 export const RegisterPage = () => {
+  const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
     first_name: "",
     last_name: "",
@@ -35,29 +36,40 @@ export const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     //check length of name, username,password
-    console.log(credentials);
-    if (
-      !checkLength("name", first_name) ||
-      !checkLength("name", last_name) ||
-      !checkLength("name", username) ||
-      !checkLength("password", password)
-    ) {
-      return;
+
+    //check passwordConfirm is equal password
+    if (password !== confirmPassword) {
+      toast.error("Password and password confirm is not the same");
+    } else if (password.length < 6) {
+      toast.error("Password has to have at least 6 characters");
+    } else if (first_name.length < 2 || first_name.length > 32) {
+      toast.error("First name has to be between 2 and 32 characters");
+    } else if (last_name.length < 2 || last_name.length > 32) {
+      toast.error("Last name has to be between 2 and 32 characters");
+    } else if (username.length < 2 || username.length > 32) {
+      toast.error("Username has to be between 2 and 32 characters");
+    } else if (color.length === 0) {
+      toast.error("Please pick a color");
     } else {
-      //check passwordConfirm is equal password
-      if (password !== confirmPassword) {
-        toast.error("Password and password confirm is not the same");
-      }
-      //check if there is a color
-      if (color.length === 0) {
-        toast.error("Please pick a color");
-      }
       //send to BE
       await userRegister(credentials)
-        .then((res) => toast.success(res.data.message))
+        .then((res) => {
+          toast.success(res.data.message);
+          //reset credentials
+          setCredentials({
+            ...credentials,
+            first_name: "",
+            last_name: "",
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            color: "",
+          });
+          //Navigate user back to login page
+          navigate("/");
+        })
         .catch((err) => toast.error(err.response.data.message));
-      // console.log(process.env);
-      //send verify email in res
     }
   };
 

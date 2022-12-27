@@ -22,3 +22,26 @@ export const resendActivationToken = async (email) => {
     email: email,
   });
 };
+
+export const sendPasswordResetLink = async (email) => {
+  return await axios.post(
+    `http://localhost:8000/api/auth_sendResetPasswordEmail`,
+    {
+      email: email,
+    }
+  );
+};
+
+export const updatePassword = async (token, password) => {
+  return await axios.post(
+    `http://localhost:8000/api/auth_resetPassword`,
+    {
+      password: password,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

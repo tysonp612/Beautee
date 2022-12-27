@@ -47,6 +47,7 @@ exports.userRegister = async (req, res) => {
     if (!validateEmail(email)) {
       res.status(400).json({ message: "Invalid email" });
     }
+
     const cryptedPassword = await bcrypt.hash(password, 12);
     const user = await new User({
       first_name: first_name.toLowerCase(),
@@ -76,12 +77,13 @@ exports.userRegister = async (req, res) => {
       message: "Register successfully, please activate your email to start",
     });
   } catch (err) {
+    console.log(err);
     if (err.message.includes("email_1 dup key")) {
       res.status(500).json({ message: "This email has been used already!" });
     } else {
-      res
-        .status(500)
-        .json({ message: "Registration unsuccessfull!, please try again" });
+      res.status(500).json({
+        message: `Registration failed!`,
+      });
     }
   }
 };
