@@ -56,3 +56,15 @@ export const logIn = async (loginCredentials) => {
     loginCredentials,
   });
 };
+
+export const adminCheck = async (token) => {
+  return await axios.post(
+    `http://localhost:8000/api/admin_check`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

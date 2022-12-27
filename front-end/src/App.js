@@ -1,6 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+//Private Routes
+import { UserRoute } from "./components/routes/user.routes";
+import { AdminRoute } from "./components/routes/admin.routes";
 //login page
 import { LoginPage } from "./pages/login/login.page";
 //register page
@@ -11,6 +14,10 @@ import { ActivatePage } from "./pages/activate/activate.page";
 import { ForgotPassowrd } from "./pages/forgot-password/forgot-password.page";
 //reset-password page
 import { ResetPassword } from "./pages/reset-password/reset-password.page";
+//Admin page
+import { AdminPage } from "./pages/admin/admin.page";
+//User page
+import { UserPage } from "./pages/user/user.page";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
@@ -23,6 +30,15 @@ function App() {
         <Route path="/activate/:token" element={<ActivatePage />} />
         <Route path="/forgot-password" element={<ForgotPassowrd />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+        {/* Protected Routes */}
+        <Route exact path="/admin/bookings" element={<AdminRoute />}>
+          <Route exact path="/admin/bookings" element={<AdminPage />}></Route>
+        </Route>
+
+        <Route exact path="/user/bookings" element={<UserRoute />}>
+          <Route exact path="/user/bookings" element={<UserPage />}></Route>
+        </Route>
       </Routes>
       <ToastContainer />
     </div>

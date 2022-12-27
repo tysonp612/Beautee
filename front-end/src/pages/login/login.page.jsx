@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 //import dispatch from redux
 import { useDispatch } from "react-redux";
+//react-router-dom
+import { useNavigate } from "react-router-dom";
 //action type
 import { UserActionTypes } from "./../../redux/reducers/user/user.types";
 import "./login.page.css";
@@ -9,6 +11,7 @@ import { Link } from "react-router-dom";
 import { logIn } from "./../../utils/authentication/authentication.utils";
 export const LoginPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -23,6 +26,7 @@ export const LoginPage = () => {
     e.preventDefault();
     return logIn(credentials)
       .then((res) => {
+        console.log(res);
         //toast success
         toast.success(res.data.message);
         // dispatch userdata
@@ -31,6 +35,9 @@ export const LoginPage = () => {
           payload: res.data,
         });
         //change to booking page based on role
+        // res.data.role === "admin"
+        //   ? navigate("/admin/bookings")
+        //   : navigate("/user/bookings");
       })
       .catch((err) => toast.error(err.response.data.message));
   };
