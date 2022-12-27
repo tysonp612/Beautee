@@ -1,0 +1,12 @@
+.grid-wrapper {
+  overflow: scroll;
+  height: 100vh;
+  display: grid;
+  /* grid-template-columns: repeat(36, 30px);
+  grid-template-rows: auto; */
+}
+.grid-1 {
+  display: grid;
+  overflow: scroll;
+  height: 20px;
+}

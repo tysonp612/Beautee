@@ -35,9 +35,9 @@ export const LoginPage = () => {
           payload: res.data,
         });
         //change to booking page based on role
-        // res.data.role === "admin"
-        //   ? navigate("/admin/bookings")
-        //   : navigate("/user/bookings");
+        res.data.role === "admin"
+          ? navigate("/admin/bookings")
+          : navigate("/user/bookings");
       })
       .catch((err) => toast.error(err.response.data.message));
   };
