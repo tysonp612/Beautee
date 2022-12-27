@@ -77,7 +77,6 @@ exports.userRegister = async (req, res) => {
       message: "Register successfully, please activate your email to start",
     });
   } catch (err) {
-    console.log(err);
     if (err.message.includes("email_1 dup key")) {
       res.status(500).json({ message: "This email has been used already!" });
     } else {
