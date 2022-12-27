@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { updatePassword } from "./../../utils/authentication/authentication.utils";
+import {
+  updatePassword,
+  sendPasswordResetLink,
+} from "./../../utils/authentication/authentication.utils";
 export const ResetPassword = () => {
-  const token = useParams().token;
+  const params = useParams().token;
+  const token = params.split("email=")[0];
+  const email = params.split("email=")[1];
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
     password: "",
@@ -13,7 +18,11 @@ export const ResetPassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // check password and confirmPassword
-    if (password === confirmPassword) {
+    if (password !== confirmPassword) {
+      toast.error("Password and confirm password does not match");
+    } else if (password.length < 6) {
+      toast.error("Password must have minimum 6 characters length");
+    } else {
       return updatePassword(token, password)
         .then((res) => {
           toast.success(res.data.message);
@@ -22,6 +31,15 @@ export const ResetPassword = () => {
         })
         .catch((err) => toast.error(err.response.data.message));
     }
+  };
+  const handleResendLink = (e) => {
+    e.preventDefault();
+    return sendPasswordResetLink(email)
+      .then((res) => {
+        toast.success("A reset link has been sent to you");
+        setCredentials({ ...credentials, password: "", confirmPassword: "" });
+      })
+      .catch((err) => toast.error(err.response.data.message));
   };
   return (
     <div>
@@ -42,6 +60,7 @@ export const ResetPassword = () => {
         }
       />
       <button onClick={(e) => handleSubmit(e)}>Submit</button>
+      <button onClick={(e) => handleResendLink(e)}>Resend Link</button>
     </div>
   );
 };

@@ -174,7 +174,7 @@ exports.sendResetPasswordEmail = async (req, res) => {
       { id: checkUser._id.toString() },
       "30m"
     );
-    const url = `${process.env.BASE_URL}/reset-password/${passwordResetToken}`;
+    const url = `${process.env.BASE_URL}/reset-password/${passwordResetToken}email=${email}`;
     await sendResetPassword(checkUser.email, checkUser.first_name, url);
 
     res.status(200).json({
