@@ -43,6 +43,7 @@ exports.userRegister = async (req, res) => {
       color,
       password,
     } = req.body.credentials;
+
     if (!validateEmail(email)) {
       res.status(400).json({ message: "Invalid email" });
     }
@@ -75,7 +76,13 @@ exports.userRegister = async (req, res) => {
       message: "Register successfully, please activate your email to start",
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (err.message.includes("email_1 dup key")) {
+      res.status(500).json({ message: "This email has been used already!" });
+    } else {
+      res
+        .status(500)
+        .json({ message: "Registration unsuccessfull!, please try again" });
+    }
   }
 };
 
@@ -121,6 +128,7 @@ exports.loginUser = async (req, res) => {
 exports.activateUser = async (req, res) => {
   try {
     const user = req.user;
+
     //get user by token id
     const checkUser = await User.findById(user._id);
 
@@ -138,13 +146,21 @@ exports.activateUser = async (req, res) => {
       message: "Account has beeen activated successfully.",
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (err.message.includes("jwt expired")) {
+      res.status(500).json({
+        message:
+          "Your verification link has expired, please choose resend link",
+      });
+    } else {
+      res.status(500).json("Verification failed, please choose resend link");
+    }
   }
 };
 
 exports.sendResetPasswordEmail = async (req, res) => {
   try {
     const { email } = req.body;
+
     const checkUser = await User.findOne({ email });
     if (!checkUser) {
       return res.status(500).json({

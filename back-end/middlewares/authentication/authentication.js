@@ -14,6 +14,7 @@ exports.authTokenCheck = async (req, res, next) => {
     }
 
     let userId;
+    //The middleware authTokenCheck also check the expiry date of the token
     const userTokenCheck = jwt.verify(token, process.env.TOKEN_SECRET);
     userId = userTokenCheck.id;
     const user = await User.findById(userId);
@@ -24,7 +25,14 @@ exports.authTokenCheck = async (req, res, next) => {
 
     next();
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    if (err.message.includes("jwt expired")) {
+      res.status(500).json({
+        message:
+          "Your verification link has expired, please choose resend link",
+      });
+    } else {
+      res.status(500).json(err.message);
+    }
   }
 };
 
