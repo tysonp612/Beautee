@@ -3,12 +3,15 @@ import { useSelector } from "react-redux";
 import { loadAllBookings } from "./../../utils/bookings/bookings.utils";
 //date-picker
 import { DatePickerComponent } from "./../../components/date-picker/date-picker.component";
+//modal
+import { BookingsControlModal } from "./../../components/modal/bookings-modal.component";
 //grid
 import { GridComponent } from "./../../components/grid/grid.component";
 export const AdminPage = () => {
   const [allBookings, setAllBookings] = useState(null);
   const [date, setDate] = useState(new Date());
   const adminToken = useSelector((state) => state.user.currentUser.token);
+  const userRole = useSelector((state) => state.user.currentUser.role);
 
   //   As the page loads, load all the bookings from DB
   useEffect(() => {
@@ -31,8 +34,10 @@ export const AdminPage = () => {
         openHour={openHour}
         closeHour={closeHour}
         allBookings={allBookings}
+        userRole={userRole}
       />
       <DatePickerComponent setDate={setDate} />
+      <BookingsControlModal />
     </div>
   );
 };

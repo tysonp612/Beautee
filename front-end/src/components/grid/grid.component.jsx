@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { BookingsActionTypes } from "./../../redux/reducers/bookings/bookings.types";
 //Contrast color helper
 import { getContrast } from "./../../helper/contrast-color";
 import { getFormattedTime } from "./../../helper/format-hour";
 import { formatServices } from "./../../helper/format-services";
 import "./grid.style.css";
 //Component takes in opening hour and close hour from admin page
-export const GridComponent = ({ openHour, closeHour, allBookings }) => {
+export const GridComponent = ({
+  openHour,
+  closeHour,
+  allBookings,
+  userRole,
+}) => {
   let totalOpeningHour = closeHour - openHour;
-
+  const dispatch = useDispatch();
   const [hourGrid, setHourGrid] = useState([]);
   const [hourData, setHourData] = useState([]);
   const [bookingsDummy, setBookingDummy] = useState([]);
@@ -46,7 +53,15 @@ export const GridComponent = ({ openHour, closeHour, allBookings }) => {
           className="grid-hour"
           key={i * 4 + 1}
           listid={i * 4 + 1}
+          //IF ADMIN CLICK ON THE HOUR, MAKING A DISPATCH TO SAVE THE HOUR
+          onClick={() =>
+            dispatch({
+              type: BookingsActionTypes.ADD_HOUR,
+              payload: el,
+            })
+          }
           style={{
+            cursor: `${userRole === "admin" ? "pointer" : ""}`,
             gridColumnStart: `${i * 4 + 1}`,
             gridColumnEnd: `${i * 4 + 1 + 4}`,
           }}
@@ -70,10 +85,9 @@ export const GridComponent = ({ openHour, closeHour, allBookings }) => {
     setBookingDummy(renderBookingsArr);
   };
 
-  //   TRY TO FIND THE GIRD START OF SOME HOUR
+  //   TRY TO FIND THE GIRD START OF AN HOUR
   const renderGrid = (booking) => {
-    //WHAT IF THE TIME CHANGE?
-    //delcare the bookings array, this array will be setState for all the bookings needed to be rendered
+    //WHAT IF THE OPENING TIME CHANGE?
 
     //Wait for the hourData array to load
     if (hourData.length > 0) {
@@ -128,17 +142,27 @@ export const GridComponent = ({ openHour, closeHour, allBookings }) => {
             Time booked: {getFormattedTime(booking.timeOfBooking)} <br />{" "}
             Client's name:{" "}
             {`${booking.client.first_name} ${booking.client.last_name}`}
-            <br /> Client's number: {booking.client.number}
+            {userRole === "admin" ? (
+              <>
+                <br /> Client's number: {booking.client.number}
+              </>
+            ) : (
+              ""
+            )}
             <br />
             Services booked: {formatServices(booking.services)} <br />
             Nail tech: {booking.user ? booking.user.username : "NULL"} <br />
             Note: {booking.note}
           </div>
           {/* //ADMIN CONDITIONALLY RENDER */}
-          <div className="booking-option">
-            <div className="option">EDIT</div>
-            <div className="option">DELETE</div>
-          </div>
+          {userRole === "admin" ? (
+            <div className="booking-option">
+              <div className="option">EDIT</div>
+              <div className="option">DELETE</div>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       );
     }
