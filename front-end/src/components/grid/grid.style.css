@@ -1,11 +1,11 @@
 .grid-wrapper {
   overflow: scroll;
-  height: 100vh;
+
+  height: 90vh;
+  width: 100vw;
   display: grid;
   grid-auto-flow: column;
   grid-gap: 5px;
-  /* grid-template-columns: repeat(36, 30px);
-  grid-template-rows: auto; */
 }
 .grid-1 {
   display: grid;

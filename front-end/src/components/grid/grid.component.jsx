@@ -108,6 +108,7 @@ export const GridComponent = ({ openHour, closeHour }) => {
           style={{
             gridColumnStart: `${startGrid}`,
             gridColumnEnd: `${startGrid + timeToAdd}`,
+            overflow: "scroll",
             backgroundColor: "red",
           }}
         ></div>
@@ -121,13 +122,17 @@ export const GridComponent = ({ openHour, closeHour }) => {
         className="grid-wrapper"
         style={{
           gridTemplateColumns: `repeat(${totalOpeningHour * 4},80px)`,
-          gridTemplateRows: "30px auto",
+          gridTemplateRows: "30px ",
+          gridAutoRows: "200px",
         }}
       >
         {hourGrid}
-
-        {renderGrid(12.75, 60)}
+        {renderGrid(11.75, 60)}
+        {renderGrid(10, 60)}
         {renderGrid(12, 60)}
+        {renderGrid(12, 60)}
+        {renderGrid(12, 60)}
+        {renderGrid(12.25, 60)}
       </div>
     </div>
   );
