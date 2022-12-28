@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+//Contrast color helper
+import { getContrast } from "./../../helper/contrast-color";
+import { getFormattedTime } from "./../../helper/format-hour";
+import { formatServices } from "./../../helper/format-services";
 import "./grid.style.css";
 //Component takes in opening hour and close hour from admin page
 export const GridComponent = ({ openHour, closeHour, allBookings }) => {
@@ -59,9 +63,9 @@ export const GridComponent = ({ openHour, closeHour, allBookings }) => {
   const renderBookings = () => {
     let renderBookingsArr = [];
     if (allBookings && hourData.length > 0) {
-      allBookings.forEach((booking) =>
-        renderBookingsArr.push(renderGrid(booking))
-      );
+      allBookings.forEach((booking) => {
+        renderBookingsArr.push(renderGrid(booking));
+      });
     }
     setBookingDummy(renderBookingsArr);
   };
@@ -105,16 +109,36 @@ export const GridComponent = ({ openHour, closeHour, allBookings }) => {
           timeToAdd = 8;
           break;
       }
-
+      //FIX NULL USER (TECHNICIAN)
       return (
         <div
+          className="booking"
           style={{
             gridColumnStart: `${startGrid}`,
             gridColumnEnd: `${startGrid + timeToAdd}`,
             backgroundColor: `${booking.user ? booking.user.color : "blue"}`,
+            color: `${
+              booking.user ? getContrast(booking.user.color) : "white"
+            }`,
             overflow: "scroll",
           }}
-        ></div>
+        >
+          <div className="booking-text">
+            Time booked: {getFormattedTime(booking.timeOfBooking)} <br />{" "}
+            Client's name:{" "}
+            {`${booking.client.first_name} ${booking.client.last_name}`}
+            <br /> Client's number: {booking.client.number}
+            <br />
+            Services booked: {formatServices(booking.services)} <br />
+            Nail tech: {booking.user ? booking.user.username : "NULL"} <br />
+            Note: {booking.note}
+          </div>
+          {/* //ADMIN CONDITIONALLY RENDER */}
+          <div className="booking-option">
+            <div className="option">EDIT</div>
+            <div className="option">DELETE</div>
+          </div>
+        </div>
       );
     }
   };

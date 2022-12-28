@@ -12,3 +12,28 @@
   overflow: scroll;
   height: 20px;
 }
+.booking-text {
+  padding: 2%;
+  font-size: 0.9em;
+}
+.booking {
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-out;
+  justify-content: space-between;
+}
+.booking-option {
+  display: flex;
+  opacity: 0;
+  transition: all ease-in 0.2s;
+  justify-content: space-evenly;
+}
+
+.booking:hover > .booking-option {
+  opacity: 100;
+}
+
+.booking:hover {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
