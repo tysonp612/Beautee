@@ -23,6 +23,7 @@
   justify-content: space-between;
 }
 .booking-option {
+  padding-bottom: 10px;
   display: flex;
   opacity: 0;
   transition: all ease-in 0.2s;

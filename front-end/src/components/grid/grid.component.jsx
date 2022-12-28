@@ -112,6 +112,7 @@ export const GridComponent = ({ openHour, closeHour, allBookings }) => {
       //FIX NULL USER (TECHNICIAN)
       return (
         <div
+          key={booking._id}
           className="booking"
           style={{
             gridColumnStart: `${startGrid}`,

@@ -4,13 +4,13 @@ import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useEffect } from "react";
 
-export function DatePickerComponent({ setDate }) {
-  const [value, setValue] = React.useState(null);
+export function DatePickerComponent({ setDate, date }) {
+  const [value, setValue] = React.useState(new Date());
   if (value && value.$d != "Invalid Date") {
-    setDate(value);
+    setDate(value.$d);
   }
-
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker

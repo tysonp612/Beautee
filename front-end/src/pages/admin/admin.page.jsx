@@ -7,7 +7,7 @@ import { DatePickerComponent } from "./../../components/date-picker/date-picker.
 import { GridComponent } from "./../../components/grid/grid.component";
 export const AdminPage = () => {
   const [allBookings, setAllBookings] = useState(null);
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(new Date());
   const adminToken = useSelector((state) => state.user.currentUser.token);
 
   //   As the page loads, load all the bookings from DB
@@ -16,7 +16,7 @@ export const AdminPage = () => {
   }, [date]);
   const getAllBookings = () => {
     if (date) {
-      return loadAllBookings(adminToken, date)
+      return loadAllBookings(adminToken, date.toDateString())
         .then((res) => setAllBookings(res.data))
         .catch((err) => console.log(err));
     }
