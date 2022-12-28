@@ -2,6 +2,8 @@
   overflow: scroll;
   height: 100vh;
   display: grid;
+  grid-auto-flow: column;
+  grid-gap: 5px;
   /* grid-template-columns: repeat(36, 30px);
   grid-template-rows: auto; */
 }
