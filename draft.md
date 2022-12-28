@@ -39,3 +39,8 @@ This includes
 6. Price should be in form of $00.00
 7. User should have option to update their picture profile, and show that picture
 8. More optimization for responsiveness
+
+After Dec 28, I have finished Authorization, Grid, and show bookings to grid, something to reminder for future work
+
+- Some user is null, so the booking back-ground color is not right, so as the technician name, so rememeber to fix
+- Next feature to implement is EDIT/DELETE bookings, add new bookings and open modal
