@@ -35,6 +35,7 @@ exports.createBooking = async (req, res) => {
 exports.getAllBookings = async (req, res) => {
   try {
     const { date } = req.body;
+
     const bookings = await Bookings.find({ date })
       .populate({
         path: "client",
@@ -46,11 +47,11 @@ exports.getAllBookings = async (req, res) => {
       })
       .populate({
         path: "services.mainService",
-        select: "service",
+        select: "service price",
       })
       .populate({
         path: "services.actualService",
-        select: "service",
+        select: "service price",
       });
     res.status(200).json(bookings);
   } catch (err) {

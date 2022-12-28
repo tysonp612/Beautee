@@ -23,7 +23,18 @@ export const GridComponent = ({ openHour, closeHour }) => {
     openHourArr.forEach((el, i) => {
       //This state will store all the grid data for hour, for ex [{hour:11,gridStart:29}]
       //Use this data to find the gridStart when we load all the bookings, for ex, booking has the property: timebooked: 11 => get gridStart of 29 at 11 by looping through this state and filter the hour
-      gridHourData.push({ hour: el, gridStart: i * 4 + 1 });
+      gridHourData.push(
+        { hour: el, gridStart: i * 4 + 1 },
+        { hour: el + 0.25, gridStart: i * 4 + 2 },
+        {
+          hour: el + 0.5,
+          gridStart: i * 4 + 3,
+        },
+        {
+          hour: el + 0.75,
+          gridStart: i * 4 + 4,
+        }
+      );
       //This will create an array, which inside will have the grid value of all hours for ex(7-19) with number indicating after every 4 grid space, this can be dynamically changed by changing totalOpening hour
       gridHourRender.push(
         <div
@@ -115,7 +126,7 @@ export const GridComponent = ({ openHour, closeHour }) => {
       >
         {hourGrid}
 
-        {renderGrid(12, 90)}
+        {renderGrid(12.75, 60)}
         {renderGrid(12, 60)}
       </div>
     </div>
