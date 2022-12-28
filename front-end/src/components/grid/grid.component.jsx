@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import "./grid.style.css";
 //Component takes in opening hour and close hour from admin page
-export const GridComponent = ({ openHour, closeHour }) => {
+export const GridComponent = ({ openHour, closeHour, allBookings }) => {
   let totalOpeningHour = closeHour - openHour;
 
   const [hourGrid, setHourGrid] = useState([]);
   const [hourData, setHourData] = useState([]);
-  const [bookings, setBookings] = useState([]);
+  const [bookingsDummy, setBookingDummy] = useState([]);
   useEffect(() => {
     renderHour();
-  }, [totalOpeningHour]);
+    renderBookings();
+  }, [totalOpeningHour, allBookings]);
   //1. calculate the total amount of opening hour
   const renderHour = () => {
     let openHourArr = [];
@@ -55,18 +56,30 @@ export const GridComponent = ({ openHour, closeHour }) => {
     setHourData(gridHourData);
   };
 
+  const renderBookings = () => {
+    let renderBookingsArr = [];
+    if (allBookings && hourData.length > 0) {
+      allBookings.forEach((booking) =>
+        renderBookingsArr.push(renderGrid(booking))
+      );
+    }
+    setBookingDummy(renderBookingsArr);
+  };
+
   //   TRY TO FIND THE GIRD START OF SOME HOUR
-  const renderGrid = (time, duration) => {
+  const renderGrid = (booking) => {
     //WHAT IF THE TIME CHANGE?
     //delcare the bookings array, this array will be setState for all the bookings needed to be rendered
-    let renderBookingsArr = [];
+
     //Wait for the hourData array to load
     if (hourData.length > 0) {
       let timeToAdd;
+      console.log();
       //loop through the array, find the element matches with the time, then extract its gridStart position
-      const startGrid = hourData.find((el) => el.hour === time).gridStart;
+      const startGrid = hourData.find((el) => el.hour === booking.timeOfBooking)
+        .gridStart;
       //switch cases for the durations
-      switch (duration) {
+      switch (booking.period) {
         case 15:
           timeToAdd = 1;
           break;
@@ -93,23 +106,13 @@ export const GridComponent = ({ openHour, closeHour }) => {
           break;
       }
 
-      //   renderBookingsArr.push(
-      //     <div
-      //       style={{
-      //         gridColumnStart: `${startGrid}`,
-      //         gridColumnEnd: `${startGrid + timeToAdd}`,
-      //         backgroundColor: "red",
-      //       }}
-      //     ></div>
-      //   );
-      //   setBookings(renderBookingsArr);
       return (
         <div
           style={{
             gridColumnStart: `${startGrid}`,
             gridColumnEnd: `${startGrid + timeToAdd}`,
+            backgroundColor: `${booking.user ? booking.user.color : "blue"}`,
             overflow: "scroll",
-            backgroundColor: "red",
           }}
         ></div>
       );
@@ -127,12 +130,7 @@ export const GridComponent = ({ openHour, closeHour }) => {
         }}
       >
         {hourGrid}
-        {renderGrid(11.75, 60)}
-        {renderGrid(10, 60)}
-        {renderGrid(12, 60)}
-        {renderGrid(12, 60)}
-        {renderGrid(12, 60)}
-        {renderGrid(12.25, 60)}
+        {bookingsDummy}
       </div>
     </div>
   );

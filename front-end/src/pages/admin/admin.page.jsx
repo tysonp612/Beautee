@@ -17,7 +17,7 @@ export const AdminPage = () => {
   const getAllBookings = () => {
     if (date) {
       return loadAllBookings(adminToken, date)
-        .then((res) => console.log(res))
+        .then((res) => setAllBookings(res.data))
         .catch((err) => console.log(err));
     }
   };
@@ -27,7 +27,11 @@ export const AdminPage = () => {
     <div>
       HELLO FROM ADMIN
       {/* GRID */}
-      <GridComponent openHour={openHour} closeHour={closeHour} />
+      <GridComponent
+        openHour={openHour}
+        closeHour={closeHour}
+        allBookings={allBookings}
+      />
       <DatePickerComponent setDate={setDate} />
     </div>
   );
