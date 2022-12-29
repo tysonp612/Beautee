@@ -1,11 +1,12 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import "./bookings-modal.style.css";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useEffect } from "react";
-
+import { findClient } from "./../../utils/clients/clients.utils";
 const style = {
   position: "absolute",
   top: "50%",
@@ -13,14 +14,30 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
 export const BookingsControlModal = () => {
-  const [open, setOpen] = React.useState(false);
+  //DECLARE VARIABLES
+  const [open, setOpen] = useState(false);
+  const [hideSearchBox, setHideSearchBox] = useState(true);
+  const [bookingInfo, setBookingInfo] = useState({
+    client: null,
+  });
+  const [clientSearch, setClientSearch] = useState([]);
+  const [clientNamePlaceholder, setClientNamePlaceholder] = useState("");
   const dispatch = useDispatch();
+  const hourSelected = useSelector((state) => state.bookings.hourAdded);
+  const adminToken = useSelector((state) => state.user.currentUser.token);
+
+  useEffect(() => {
+    if (hourSelected) {
+      setOpen(true);
+    }
+  }, [hourSelected]);
+
+  //HANDLE
   const handleClose = () => {
     dispatch({
       type: "ADD_HOUR",
@@ -28,12 +45,48 @@ export const BookingsControlModal = () => {
     });
     setOpen(false);
   };
-  const hourSelected = useSelector((state) => state.bookings.hourAdded);
-  useEffect(() => {
-    if (hourSelected) {
-      setOpen(true);
+
+  const handleFindClients = (keyword) => {
+    return findClient(adminToken, keyword)
+      .then((res) => setClientSearch(res.data.client))
+      .catch((err) => console.log(err));
+  };
+  const renderFindClients = () => {
+    let clientsArr = [];
+    if (clientSearch) {
+      clientSearch.forEach((el) =>
+        clientsArr.push(
+          <div
+            className="client-pick-container"
+            style={{ cursor: "pointer" }}
+            key={el._id}
+            onClick={(e) => {
+              setBookingInfo({ ...bookingInfo, client: el });
+              setClientNamePlaceholder(
+                `${el.first_name} ${el.last_name} - ${el.number}`
+              );
+              setHideSearchBox(true);
+            }}
+          >
+            <div className="client-pick">{`${el.first_name} ${el.last_name} - ${el.number}`}</div>
+          </div>
+        )
+      );
+    } else {
+      clientsArr.push(
+        <div key={"N/A"}>
+          <div>No Customer found</div>
+          <div
+            onClick={(e) => console.log("hehe")}
+            style={{ cursor: "pointer" }}
+          >
+            Click here to create new customer
+          </div>
+        </div>
+      );
     }
-  }, [hourSelected]);
+    return clientsArr;
+  };
   return (
     <div>
       <Modal
@@ -43,12 +96,27 @@ export const BookingsControlModal = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
+          <div className="modal-title">Schedule Booking</div>
+          <div className="modal-input-wrapper">
+            <div className="modal-input-container">
+              <div className="modal-customer-search">
+                <input
+                  className="searchBox-input"
+                  type="text"
+                  value={clientNamePlaceholder}
+                  onFocus={() => setHideSearchBox(false)}
+                  placeholder="Search customers"
+                  onChange={(e) => {
+                    setClientNamePlaceholder(e.target.value);
+                    handleFindClients(e.target.value);
+                  }}
+                />
+                <div hidden={hideSearchBox} className="searchBox">
+                  {renderFindClients()}
+                </div>
+              </div>
+            </div>
+          </div>
         </Box>
       </Modal>
     </div>

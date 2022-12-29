@@ -1,0 +1,10 @@
+.searchBox {
+  height: 8em;
+  overflow: scroll;
+}
+.client-pick-container:hover > .client-pick {
+  background-color: gray;
+}
+.searchBox-input {
+  width: 60%;
+}
