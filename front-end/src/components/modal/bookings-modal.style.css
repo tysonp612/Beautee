@@ -1,5 +1,7 @@
 .searchBox {
   height: 8em;
+  width: 50%;
+  border: 1px solid black;
   overflow: scroll;
 }
 .client-pick-container:hover > .client-pick {

@@ -7,12 +7,14 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useEffect } from "react";
 import { findClient } from "./../../utils/clients/clients.utils";
+import { CreateClientModal } from "./../modal/create-client-modal.component";
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: "40vw",
+  height: "90vh",
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
@@ -26,6 +28,7 @@ export const BookingsControlModal = () => {
     client: null,
   });
   const [clientSearch, setClientSearch] = useState([]);
+  const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
   const [clientNamePlaceholder, setClientNamePlaceholder] = useState("");
   const dispatch = useDispatch();
   const hourSelected = useSelector((state) => state.bookings.hourAdded);
@@ -35,7 +38,7 @@ export const BookingsControlModal = () => {
     if (hourSelected) {
       setOpen(true);
     }
-  }, [hourSelected]);
+  }, [hourSelected, openCreateClientModal, clientSearch]);
 
   //HANDLE
   const handleClose = () => {
@@ -77,7 +80,9 @@ export const BookingsControlModal = () => {
         <div key={"N/A"}>
           <div>No Customer found</div>
           <div
-            onClick={(e) => console.log("hehe")}
+            onClick={(e) => {
+              setOpenCreateClientModal(false);
+            }}
             style={{ cursor: "pointer" }}
           >
             Click here to create new customer
@@ -89,12 +94,7 @@ export const BookingsControlModal = () => {
   };
   return (
     <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={open}>
         <Box sx={style}>
           <div className="modal-title">Schedule Booking</div>
           <div className="modal-input-wrapper">
@@ -104,19 +104,44 @@ export const BookingsControlModal = () => {
                   className="searchBox-input"
                   type="text"
                   value={clientNamePlaceholder}
-                  onFocus={() => setHideSearchBox(false)}
                   placeholder="Search customers"
+                  onClick={() => {
+                    handleFindClients(" ");
+                    setHideSearchBox(false);
+                  }}
                   onChange={(e) => {
                     setClientNamePlaceholder(e.target.value);
                     handleFindClients(e.target.value);
                   }}
                 />
                 <div hidden={hideSearchBox} className="searchBox">
+                  <div
+                    style={{ textAlign: "right", cursor: "pointer" }}
+                    onClick={(e) => setHideSearchBox(true)}
+                  >
+                    X
+                  </div>
                   {renderFindClients()}
                 </div>
               </div>
+              <p
+                style={{ cursor: "pointer" }}
+                onClick={(e) => {
+                  setHideSearchBox(true);
+                  setOpenCreateClientModal(false);
+                }}
+              >
+                Cant find user, click here to create user
+              </p>
             </div>
           </div>
+          <CreateClientModal
+            setOpenCreateClientModal={setOpenCreateClientModal}
+            openCreateClientModal={openCreateClientModal}
+            setClientNamePlaceholder={setClientNamePlaceholder}
+            setBookingInfo={setBookingInfo}
+            bookingInfo={bookingInfo}
+          />
         </Box>
       </Modal>
     </div>
