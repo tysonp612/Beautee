@@ -28,6 +28,7 @@ export const BookingsControlModal = ({ totalOpenHour }) => {
   const [bookingInfo, setBookingInfo] = useState({
     timeBooked: hourSelected,
     client: null,
+    duration: "",
   });
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
