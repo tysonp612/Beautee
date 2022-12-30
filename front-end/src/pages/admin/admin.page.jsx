@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { loadAllBookings } from "./../../utils/bookings/bookings.utils";
+import { loadAllServices } from "./../../utils/services/services.utils";
 import { getAllTechnicians } from "./../../utils/technician/technician.utils";
 //date-picker
 import { DatePickerComponent } from "./../../components/date-picker/date-picker.component";
@@ -22,6 +23,7 @@ export const AdminPage = () => {
     getAllBookings();
     getTotalOpenHour();
     getTechnicians();
+    getServices();
   }, [date]);
   const getAllBookings = () => {
     if (date) {
@@ -38,7 +40,11 @@ export const AdminPage = () => {
       .catch((err) => console.log(err));
   };
   const getServices = () => {
-    return;
+    return loadAllServices()
+      .then((res) => {
+        setAllServices(res.data.services);
+      })
+      .catch((err) => console.log(err));
   };
   const openHour = 10;
   const closeHour = 19;
@@ -63,6 +69,7 @@ export const AdminPage = () => {
       <BookingsControlModal
         totalOpenHour={totalOpenHour}
         allTechnicians={allTechnicians}
+        allServices={allServices}
       />
     </div>
   );

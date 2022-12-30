@@ -8,6 +8,7 @@ import { findClient } from "./../../../utils/clients/clients.utils";
 import { CreateClientModal } from "./create-client/create-client-modal.component";
 import { TechnicianSection } from "./terchnician/technician.component";
 import { PickHour } from "./pick-hour/pick-hour.component";
+import { ServicesPick } from "./services/services.component";
 const style = {
   position: "absolute",
   top: "50%",
@@ -20,7 +21,11 @@ const style = {
   p: 4,
 };
 
-export const BookingsControlModal = ({ totalOpenHour, allTechnicians }) => {
+export const BookingsControlModal = ({
+  totalOpenHour,
+  allTechnicians,
+  allServices,
+}) => {
   //DECLARE VARIABLES
   const hourSelected = useSelector((state) => state.bookings.hourAdded);
   const [open, setOpen] = useState(false);
@@ -31,6 +36,7 @@ export const BookingsControlModal = ({ totalOpenHour, allTechnicians }) => {
     client: null,
     duration: "",
     worker: "",
+    services: [],
   });
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
@@ -157,7 +163,12 @@ export const BookingsControlModal = ({ totalOpenHour, allTechnicians }) => {
               bookingInfo={bookingInfo}
               hourSelected={hourSelected}
             />
-            <div className="pick-hour-section"></div>
+            {/* PICK SERVICES */}
+            <ServicesPick
+              setBookingInfo={setBookingInfo}
+              bookingInfo={bookingInfo}
+              allServices={allServices}
+            />
           </div>
         </div>
         <CreateClientModal
