@@ -7,7 +7,9 @@ const {
   adminCheck,
 } = require("../../middlewares/authentication/authentication");
 
-router.route("/getAllUsers").get(userController.getAllUsers);
+router
+  .route("/getAllUsers")
+  .post(authTokenCheck, adminCheck, userController.getAllUsers);
 router
   .route("/updateTipAndWage")
   .post(authTokenCheck, adminCheck, userController.updateTipAndWage);

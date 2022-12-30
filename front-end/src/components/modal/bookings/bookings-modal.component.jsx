@@ -6,6 +6,7 @@ import Modal from "@mui/material/Modal";
 import { useEffect } from "react";
 import { findClient } from "./../../../utils/clients/clients.utils";
 import { CreateClientModal } from "./create-client/create-client-modal.component";
+import { TechnicianSection } from "./terchnician/technician.component";
 import { PickHour } from "./pick-hour/pick-hour.component";
 const style = {
   position: "absolute",
@@ -19,7 +20,7 @@ const style = {
   p: 4,
 };
 
-export const BookingsControlModal = ({ totalOpenHour }) => {
+export const BookingsControlModal = ({ totalOpenHour, allTechnicians }) => {
   //DECLARE VARIABLES
   const hourSelected = useSelector((state) => state.bookings.hourAdded);
   const [open, setOpen] = useState(false);
@@ -29,16 +30,18 @@ export const BookingsControlModal = ({ totalOpenHour }) => {
     timeBooked: hourSelected,
     client: null,
     duration: "",
+    worker: "",
   });
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
   const [clientNamePlaceholder, setClientNamePlaceholder] = useState("");
+
   const dispatch = useDispatch();
 
   const adminToken = useSelector((state) => state.user.currentUser.token);
 
   useEffect(() => {
-    if (hourSelected) {
+    if (hourSelected && allTechnicians) {
       setOpen(true);
     }
   }, [hourSelected, openCreateClientModal, clientSearch, bookingInfo]);
@@ -119,13 +122,13 @@ export const BookingsControlModal = ({ totalOpenHour }) => {
                 }}
               />
               <div hidden={hideSearchBox} className="searchBox">
+                {renderFindClients()}
                 <div
                   style={{ textAlign: "center", cursor: "pointer" }}
                   onClick={(e) => setHideSearchBox(true)}
                 >
                   X
                 </div>
-                {renderFindClients()}
               </div>
             </div>
             {/* CREATE-CLIENT */}
@@ -140,6 +143,13 @@ export const BookingsControlModal = ({ totalOpenHour }) => {
                 Cant find user, click here to create user
               </p>
             </div>
+            {/* PICK TECHICIANS */}
+
+            <TechnicianSection
+              setBookingInfo={setBookingInfo}
+              bookingInfo={bookingInfo}
+              allTechnicians={allTechnicians}
+            />
             {/* PICK-HOUR */}
             <PickHour
               totalOpenHour={totalOpenHour}

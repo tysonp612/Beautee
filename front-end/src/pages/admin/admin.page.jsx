@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { loadAllBookings } from "./../../utils/bookings/bookings.utils";
+import { getAllTechnicians } from "./../../utils/technician/technician.utils";
 //date-picker
 import { DatePickerComponent } from "./../../components/date-picker/date-picker.component";
 //modal
@@ -10,6 +11,8 @@ import { GridComponent } from "./../../components/grid/grid.component";
 export const AdminPage = () => {
   const [allBookings, setAllBookings] = useState(null);
   const [totalOpenHour, setTotalOpenHour] = useState([]);
+  const [allTechnicians, setAllTechnicians] = useState([]);
+  const [allServices, setAllServices] = useState([]);
   const [date, setDate] = useState(new Date());
   const adminToken = useSelector((state) => state.user.currentUser.token);
   const userRole = useSelector((state) => state.user.currentUser.role);
@@ -18,6 +21,7 @@ export const AdminPage = () => {
   useEffect(() => {
     getAllBookings();
     getTotalOpenHour();
+    getTechnicians();
   }, [date]);
   const getAllBookings = () => {
     if (date) {
@@ -25,6 +29,16 @@ export const AdminPage = () => {
         .then((res) => setAllBookings(res.data))
         .catch((err) => console.log(err));
     }
+  };
+  const getTechnicians = () => {
+    return getAllTechnicians(adminToken)
+      .then((res) => {
+        setAllTechnicians(res.data.users);
+      })
+      .catch((err) => console.log(err));
+  };
+  const getServices = () => {
+    return;
   };
   const openHour = 10;
   const closeHour = 19;
@@ -46,7 +60,10 @@ export const AdminPage = () => {
         userRole={userRole}
       />
       <DatePickerComponent setDate={setDate} />
-      <BookingsControlModal totalOpenHour={totalOpenHour} />
+      <BookingsControlModal
+        totalOpenHour={totalOpenHour}
+        allTechnicians={allTechnicians}
+      />
     </div>
   );
 };
