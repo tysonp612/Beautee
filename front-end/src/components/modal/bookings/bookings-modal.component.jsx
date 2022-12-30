@@ -37,6 +37,7 @@ export const BookingsControlModal = ({
     duration: "",
     worker: "",
     services: [],
+    price: "",
   });
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);

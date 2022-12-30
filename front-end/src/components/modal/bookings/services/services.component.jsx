@@ -39,7 +39,11 @@ export const ServicesPick = ({ allServices, setBookingInfo, bookingInfo }) => {
     const newServicesArr = allServices.filter((el) =>
       value.includes(el.service)
     );
-    setBookingInfo({ ...bookingInfo, services: newServicesArr });
+    const total = newServicesArr
+      .map((el) => el.price)
+      .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+    setBookingInfo({ ...bookingInfo, services: newServicesArr, price: total });
   };
 
   return (
@@ -67,6 +71,15 @@ export const ServicesPick = ({ allServices, setBookingInfo, bookingInfo }) => {
             ))}
         </Select>
       </FormControl>
+      <div className="price-section">
+        <input
+          type="text"
+          value={bookingInfo.price}
+          onChange={(e) =>
+            setBookingInfo({ ...bookingInfo, price: +e.target.value })
+          }
+        />
+      </div>
     </div>
   );
 };
