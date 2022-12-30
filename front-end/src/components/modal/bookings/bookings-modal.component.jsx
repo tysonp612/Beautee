@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import "./bookings-modal.style.css";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -10,6 +11,7 @@ import { TechnicianSection } from "./terchnician/technician.component";
 import { PickHour } from "./pick-hour/pick-hour.component";
 import { ServicesPick } from "./services/services.component";
 import { BookingDatePickerComponent } from "./date/booking-date-picker.component";
+import { NoteComponent } from "./note/booking-note.component";
 const style = {
   position: "absolute",
   top: "50%",
@@ -29,6 +31,7 @@ export const BookingsControlModal = ({
 }) => {
   //DECLARE VARIABLES
   const hourSelected = useSelector((state) => state.bookings.hourAdded);
+
   const [open, setOpen] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
 
@@ -40,6 +43,7 @@ export const BookingsControlModal = ({
     services: [],
     price: "",
     date: new Date(),
+    note: "",
   });
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
@@ -50,10 +54,16 @@ export const BookingsControlModal = ({
   const adminToken = useSelector((state) => state.user.currentUser.token);
 
   useEffect(() => {
-    if (hourSelected && allTechnicians) {
+    if (hourSelected && allTechnicians.length > 0) {
+      const admin = allTechnicians.find((el) => el.role === "admin")._id;
       setOpen(true);
+      setBookingInfo({
+        ...bookingInfo,
+        worker: admin,
+        timeBooked: hourSelected,
+      });
     }
-  }, [hourSelected, openCreateClientModal, clientSearch, bookingInfo]);
+  }, [hourSelected, openCreateClientModal, clientSearch]);
 
   //HANDLE
   const handleClose = () => {
@@ -61,10 +71,41 @@ export const BookingsControlModal = ({
       type: "ADD_HOUR",
       payload: null,
     });
-    setBookingInfo({ ...bookingInfo, timeBooked: null, client: null });
+    setBookingInfo({
+      ...bookingInfo,
+      timeBooked: null,
+      client: null,
+      duration: "",
+      worker: "",
+      services: [],
+      price: "",
+      date: null,
+      note: "",
+    });
+    setClientNamePlaceholder("");
     setOpen(false);
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    //DO VALIDATION
 
+    if (!bookingInfo.client) {
+      toast.error("Client is required!");
+    } else if (bookingInfo.duration.length === 0) {
+      toast.error("Duration field is required!");
+    } else if (bookingInfo.services.length === 0) {
+      toast.error("Services can not be empty!");
+    } else if (bookingInfo.price.length === 0) {
+      toast.error("Price is required!");
+    } else if (bookingInfo.price === 0) {
+      toast.error("Price must be larger than $0");
+    } else if (new Date() > Date.parse(bookingInfo.date)) {
+      toast.error("Invalid date!");
+    } else {
+      toast.success("A reservation has been created successfully!");
+    }
+    console.log(bookingInfo);
+  };
   const handleFindClients = (keyword) => {
     return findClient(adminToken, keyword)
       .then((res) => setClientSearch(res.data.client))
@@ -80,7 +121,7 @@ export const BookingsControlModal = ({
             style={{ cursor: "pointer" }}
             key={el._id}
             onClick={(e) => {
-              setBookingInfo({ ...bookingInfo, client: el });
+              setBookingInfo({ ...bookingInfo, client: el._id });
               setClientNamePlaceholder(
                 `${el.first_name} ${el.last_name} - ${el.number}`
               );
@@ -177,6 +218,13 @@ export const BookingsControlModal = ({
               setBookingInfo={setBookingInfo}
               bookingInfo={bookingInfo}
             />
+            <NoteComponent
+              setBookingInfo={setBookingInfo}
+              bookingInfo={bookingInfo}
+            />
+            <div className="submit-button-sec">
+              <button onClick={(e) => handleSubmit(e)}>Submit</button>
+            </div>
           </div>
         </div>
         <CreateClientModal

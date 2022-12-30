@@ -14,7 +14,7 @@ export const AdminPage = () => {
   const [totalOpenHour, setTotalOpenHour] = useState([]);
   const [allTechnicians, setAllTechnicians] = useState([]);
   const [allServices, setAllServices] = useState([]);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState();
   const adminToken = useSelector((state) => state.user.currentUser.token);
   const userRole = useSelector((state) => state.user.currentUser.role);
 

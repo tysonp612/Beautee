@@ -11,21 +11,24 @@ export function BookingDatePickerComponent({ setBookingInfo, bookingInfo }) {
   useEffect(() => {
     if (value && value.$d != "Invalid Date") {
       value.$d
-        ? setBookingInfo({ ...bookingInfo, date: value.$d })
-        : setBookingInfo({ ...bookingInfo, date: value });
+        ? setBookingInfo({ ...bookingInfo, date: value.$d.toDateString() })
+        : setBookingInfo({ ...bookingInfo, date: value.toDateString() });
     }
   }, [value]);
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DatePicker
-        label="Date"
-        value={value}
-        onChange={(newValue) => {
-          setValue(newValue);
-        }}
-        renderInput={(params) => <TextField {...params} />}
-      />
-    </LocalizationProvider>
+    <>
+      Date:
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          label="Date"
+          value={value}
+          onChange={(newValue) => {
+            setValue(newValue);
+          }}
+          renderInput={(params) => <TextField {...params} />}
+        />
+      </LocalizationProvider>
+    </>
   );
 }

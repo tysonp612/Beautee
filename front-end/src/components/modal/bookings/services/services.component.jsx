@@ -23,7 +23,6 @@ export const ServicesPick = ({ allServices, setBookingInfo, bookingInfo }) => {
   const [servicesName, setServicesName] = useState([]);
   useEffect(() => {
     if (allServices.length > 0) {
-      console.log(allServices);
       setServicesName(allServices);
     }
   }, [allServices]);
@@ -48,6 +47,7 @@ export const ServicesPick = ({ allServices, setBookingInfo, bookingInfo }) => {
 
   return (
     <div>
+      Services:
       <FormControl sx={{ m: 2, width: 300 }}>
         <InputLabel style={{ top: "-8px" }} id="demo-multiple-checkbox-label">
           Services
@@ -72,6 +72,7 @@ export const ServicesPick = ({ allServices, setBookingInfo, bookingInfo }) => {
         </Select>
       </FormControl>
       <div className="price-section">
+        Price:
         <input
           type="text"
           value={bookingInfo.price}

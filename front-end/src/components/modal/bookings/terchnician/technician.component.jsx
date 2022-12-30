@@ -5,13 +5,6 @@ export const TechnicianSection = ({
   bookingInfo,
   setBookingInfo,
 }) => {
-  useEffect(() => {
-    if (allTechnicians.length > 0) {
-      const admin =
-        allTechnicians && allTechnicians.find((el) => el.role === "admin")._id;
-      setBookingInfo({ ...bookingInfo, worker: admin });
-    }
-  }, [allTechnicians]);
   const renderTechnicians = () => {
     let dummyArr = [];
     if (allTechnicians) {

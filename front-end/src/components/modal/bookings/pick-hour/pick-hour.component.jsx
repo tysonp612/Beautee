@@ -9,7 +9,6 @@ export const PickHour = ({
   const [dummyHour, setDummyHour] = useState(hourSelected);
   useEffect(() => {
     if (hourSelected) {
-      setBookingInfo({ ...bookingInfo, timeBooked: hourSelected });
       setDummyHour(hourSelected);
     }
   }, [hourSelected]);
