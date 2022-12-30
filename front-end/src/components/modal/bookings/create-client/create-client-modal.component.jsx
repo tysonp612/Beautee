@@ -32,7 +32,7 @@ export const CreateClientModal = ({
         setClientNamePlaceholder(
           `${res.data.first_name} ${res.data.last_name} - ${res.data.number}`
         );
-        setBookingInfo({ ...bookingInfo, client: res.data });
+        setBookingInfo({ ...bookingInfo, client: res.data.id });
         setOpenCreateClientModal(true);
         setClientData({
           first_name: "",

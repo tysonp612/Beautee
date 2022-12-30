@@ -8,6 +8,7 @@ import { formatServices } from "./../../helper/format-services";
 import "./grid.style.css";
 //Component takes in opening hour and close hour from admin page
 export const GridComponent = ({
+  reload,
   openHour,
   closeHour,
   allBookings,
@@ -21,7 +22,7 @@ export const GridComponent = ({
   useEffect(() => {
     renderHour();
     renderBookings();
-  }, [totalOpeningHour, allBookings]);
+  }, [totalOpeningHour, allBookings, reload]);
   //1. calculate the total amount of opening hour
   const renderHour = () => {
     let openHourArr = [];

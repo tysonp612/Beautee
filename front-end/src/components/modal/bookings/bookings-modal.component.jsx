@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useEffect } from "react";
 import { findClient } from "./../../../utils/clients/clients.utils";
+import { createBooking } from "./../../../utils/bookings/bookings.utils";
 import { CreateClientModal } from "./create-client/create-client-modal.component";
 import { TechnicianSection } from "./terchnician/technician.component";
 import { PickHour } from "./pick-hour/pick-hour.component";
@@ -28,6 +29,8 @@ export const BookingsControlModal = ({
   totalOpenHour,
   allTechnicians,
   allServices,
+  reload,
+  setReload,
 }) => {
   //DECLARE VARIABLES
   const hourSelected = useSelector((state) => state.bookings.hourAdded);
@@ -102,9 +105,15 @@ export const BookingsControlModal = ({
     } else if (new Date() > Date.parse(bookingInfo.date)) {
       toast.error("Invalid date!");
     } else {
-      toast.success("A reservation has been created successfully!");
+      console.log(bookingInfo);
+      createBooking(adminToken, bookingInfo)
+        .then((res) => {
+          toast.success(res.data.message);
+          setOpen(false);
+          setReload(!reload);
+        })
+        .catch((err) => toast.error(err.response.data.message));
     }
-    console.log(bookingInfo);
   };
   const handleFindClients = (keyword) => {
     return findClient(adminToken, keyword)

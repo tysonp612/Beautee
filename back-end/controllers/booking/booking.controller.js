@@ -7,8 +7,8 @@ exports.createBooking = async (req, res) => {
       client,
       worker,
       date,
-      time,
-      period,
+      timeBooked,
+      duration,
       services,
       price,
       note,
@@ -19,16 +19,20 @@ exports.createBooking = async (req, res) => {
       client,
       user: worker,
       date,
-      period,
+      period: duration,
       services: { mainService: servicesArr },
       price: { estimatedPrice: price },
-      timeOfBooking: time,
+      timeOfBooking: timeBooked,
       note,
     }).save();
 
-    res.status(200).json(booking);
+    res
+      .status(200)
+      .json({ message: "A reservation has been created successfully!" });
   } catch (err) {
-    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Create booking failed! Please try again" });
   }
 };
 

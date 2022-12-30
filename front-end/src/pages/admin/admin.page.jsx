@@ -10,6 +10,7 @@ import { BookingsControlModal } from "../../components/modal/bookings/bookings-m
 //grid
 import { GridComponent } from "./../../components/grid/grid.component";
 export const AdminPage = () => {
+  const [reload, setReload] = useState(false);
   const [allBookings, setAllBookings] = useState(null);
   const [totalOpenHour, setTotalOpenHour] = useState([]);
   const [allTechnicians, setAllTechnicians] = useState([]);
@@ -24,7 +25,7 @@ export const AdminPage = () => {
     getTotalOpenHour();
     getTechnicians();
     getServices();
-  }, [date]);
+  }, [date, reload]);
   const getAllBookings = () => {
     if (date) {
       return loadAllBookings(adminToken, date.toDateString())
@@ -64,12 +65,15 @@ export const AdminPage = () => {
         closeHour={closeHour}
         allBookings={allBookings}
         userRole={userRole}
+        reload={reload}
       />
       <DatePickerComponent setDate={setDate} />
       <BookingsControlModal
         totalOpenHour={totalOpenHour}
         allTechnicians={allTechnicians}
         allServices={allServices}
+        setReload={setReload}
+        reload={reload}
       />
     </div>
   );
