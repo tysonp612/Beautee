@@ -9,6 +9,7 @@ import { CreateClientModal } from "./create-client/create-client-modal.component
 import { TechnicianSection } from "./terchnician/technician.component";
 import { PickHour } from "./pick-hour/pick-hour.component";
 import { ServicesPick } from "./services/services.component";
+import { BookingDatePickerComponent } from "./date/booking-date-picker.component";
 const style = {
   position: "absolute",
   top: "50%",
@@ -38,6 +39,7 @@ export const BookingsControlModal = ({
     worker: "",
     services: [],
     price: "",
+    date: new Date(),
   });
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
@@ -164,11 +166,16 @@ export const BookingsControlModal = ({
               bookingInfo={bookingInfo}
               hourSelected={hourSelected}
             />
-            {/* PICK SERVICES */}
+            {/* PICK SERVICES AND PRICE*/}
             <ServicesPick
               setBookingInfo={setBookingInfo}
               bookingInfo={bookingInfo}
               allServices={allServices}
+            />
+            {/* DATE-PICK */}
+            <BookingDatePickerComponent
+              setBookingInfo={setBookingInfo}
+              bookingInfo={bookingInfo}
             />
           </div>
         </div>
