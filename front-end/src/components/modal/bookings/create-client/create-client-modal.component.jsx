@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { formatPhoneNumber } from "./../../helper/format-phoneNumber";
+import { formatPhoneNumber } from "./../../../../helper/format-phoneNumber";
 import "./create-client-modal.style.css";
-import { createClient } from "./../../utils/clients/clients.utils";
+import { createClient } from "./../../../../utils/clients/clients.utils";
 export const CreateClientModal = ({
   openCreateClientModal,
   setOpenCreateClientModal,
@@ -90,6 +90,19 @@ export const CreateClientModal = ({
         />
       </div>
       <button onClick={(e) => handleSumit(e)}>Submit</button>
+      <button
+        onClick={(e) => {
+          setOpenCreateClientModal(true);
+          setClientData({
+            first_name: "",
+            last_name: "",
+            number: "",
+            email: "",
+          });
+        }}
+      >
+        Cancel
+      </button>
     </div>
   );
 };

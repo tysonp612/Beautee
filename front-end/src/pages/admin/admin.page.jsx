@@ -4,11 +4,12 @@ import { loadAllBookings } from "./../../utils/bookings/bookings.utils";
 //date-picker
 import { DatePickerComponent } from "./../../components/date-picker/date-picker.component";
 //modal
-import { BookingsControlModal } from "./../../components/modal/bookings-modal.component";
+import { BookingsControlModal } from "../../components/modal/bookings/bookings-modal.component";
 //grid
 import { GridComponent } from "./../../components/grid/grid.component";
 export const AdminPage = () => {
   const [allBookings, setAllBookings] = useState(null);
+  const [totalOpenHour, setTotalOpenHour] = useState([]);
   const [date, setDate] = useState(new Date());
   const adminToken = useSelector((state) => state.user.currentUser.token);
   const userRole = useSelector((state) => state.user.currentUser.role);
@@ -16,6 +17,7 @@ export const AdminPage = () => {
   //   As the page loads, load all the bookings from DB
   useEffect(() => {
     getAllBookings();
+    getTotalOpenHour();
   }, [date]);
   const getAllBookings = () => {
     if (date) {
@@ -26,6 +28,13 @@ export const AdminPage = () => {
   };
   const openHour = 10;
   const closeHour = 19;
+  const getTotalOpenHour = () => {
+    let arr = [];
+    for (let i = openHour; i <= closeHour; i++) {
+      arr.push(i);
+    }
+    return setTotalOpenHour(arr);
+  };
   return (
     <div>
       HELLO FROM ADMIN
@@ -37,7 +46,7 @@ export const AdminPage = () => {
         userRole={userRole}
       />
       <DatePickerComponent setDate={setDate} />
-      <BookingsControlModal />
+      <BookingsControlModal totalOpenHour={totalOpenHour} />
     </div>
   );
 };

@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./bookings-modal.style.css";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useEffect } from "react";
-import { findClient } from "./../../utils/clients/clients.utils";
-import { CreateClientModal } from "./../modal/create-client-modal.component";
+import { findClient } from "./../../../utils/clients/clients.utils";
+import { CreateClientModal } from "./create-client/create-client-modal.component";
+import { PickHour } from "./pick-hour/pick-hour.component";
 const style = {
   position: "absolute",
   top: "50%",
@@ -20,25 +19,28 @@ const style = {
   p: 4,
 };
 
-export const BookingsControlModal = () => {
+export const BookingsControlModal = ({ totalOpenHour }) => {
   //DECLARE VARIABLES
+  const hourSelected = useSelector((state) => state.bookings.hourAdded);
   const [open, setOpen] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
+
   const [bookingInfo, setBookingInfo] = useState({
+    timeBooked: hourSelected,
     client: null,
   });
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
   const [clientNamePlaceholder, setClientNamePlaceholder] = useState("");
   const dispatch = useDispatch();
-  const hourSelected = useSelector((state) => state.bookings.hourAdded);
+
   const adminToken = useSelector((state) => state.user.currentUser.token);
 
   useEffect(() => {
     if (hourSelected) {
       setOpen(true);
     }
-  }, [hourSelected, openCreateClientModal, clientSearch]);
+  }, [hourSelected, openCreateClientModal, clientSearch, bookingInfo]);
 
   //HANDLE
   const handleClose = () => {
@@ -46,6 +48,7 @@ export const BookingsControlModal = () => {
       type: "ADD_HOUR",
       payload: null,
     });
+    setBookingInfo({ ...bookingInfo, timeBooked: null, client: null });
     setOpen(false);
   };
 
@@ -93,37 +96,39 @@ export const BookingsControlModal = () => {
     return clientsArr;
   };
   return (
-    <div>
-      <Modal open={open}>
-        <Box sx={style}>
-          <div className="modal-title">Schedule Booking</div>
-          <div className="modal-input-wrapper">
-            <div className="modal-input-container">
-              <div className="modal-customer-search">
-                <input
-                  className="searchBox-input"
-                  type="text"
-                  value={clientNamePlaceholder}
-                  placeholder="Search customers"
-                  onClick={() => {
-                    handleFindClients(" ");
-                    setHideSearchBox(false);
-                  }}
-                  onChange={(e) => {
-                    setClientNamePlaceholder(e.target.value);
-                    handleFindClients(e.target.value);
-                  }}
-                />
-                <div hidden={hideSearchBox} className="searchBox">
-                  <div
-                    style={{ textAlign: "right", cursor: "pointer" }}
-                    onClick={(e) => setHideSearchBox(true)}
-                  >
-                    X
-                  </div>
-                  {renderFindClients()}
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={style}>
+        <div className="modal-title">Schedule Booking</div>
+        <div className="modal-input-wrapper">
+          <div className="modal-input-container">
+            <div className="customer-search-section">
+              <input
+                className="searchBox-input"
+                type="text"
+                value={clientNamePlaceholder}
+                placeholder="Search customers"
+                onClick={() => {
+                  handleFindClients(" ");
+                  setHideSearchBox(false);
+                }}
+                onChange={(e) => {
+                  console.log(bookingInfo);
+                  setClientNamePlaceholder(e.target.value);
+                  handleFindClients(e.target.value);
+                }}
+              />
+              <div hidden={hideSearchBox} className="searchBox">
+                <div
+                  style={{ textAlign: "center", cursor: "pointer" }}
+                  onClick={(e) => setHideSearchBox(true)}
+                >
+                  X
                 </div>
+                {renderFindClients()}
               </div>
+            </div>
+            {/* CREATE-CLIENT */}
+            <div className="create-client-section">
               <p
                 style={{ cursor: "pointer" }}
                 onClick={(e) => {
@@ -134,16 +139,24 @@ export const BookingsControlModal = () => {
                 Cant find user, click here to create user
               </p>
             </div>
+            {/* PICK-HOUR */}
+            <PickHour
+              totalOpenHour={totalOpenHour}
+              setBookingInfo={setBookingInfo}
+              bookingInfo={bookingInfo}
+              hourSelected={hourSelected}
+            />
+            <div className="pick-hour-section"></div>
           </div>
-          <CreateClientModal
-            setOpenCreateClientModal={setOpenCreateClientModal}
-            openCreateClientModal={openCreateClientModal}
-            setClientNamePlaceholder={setClientNamePlaceholder}
-            setBookingInfo={setBookingInfo}
-            bookingInfo={bookingInfo}
-          />
-        </Box>
-      </Modal>
-    </div>
+        </div>
+        <CreateClientModal
+          setOpenCreateClientModal={setOpenCreateClientModal}
+          openCreateClientModal={openCreateClientModal}
+          setClientNamePlaceholder={setClientNamePlaceholder}
+          setBookingInfo={setBookingInfo}
+          bookingInfo={bookingInfo}
+        />
+      </Box>
+    </Modal>
   );
 };
