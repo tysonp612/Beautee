@@ -59,7 +59,7 @@ export const BookingsControlModal = ({
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
   const [clientNamePlaceholder, setClientNamePlaceholder] = useState("");
-
+  const [servicesForEdit, setServicesForEdit] = useState([]);
   const dispatch = useDispatch();
 
   const adminToken = useSelector((state) => state.user.currentUser.token);
@@ -102,6 +102,7 @@ export const BookingsControlModal = ({
       type: "ADD_HOUR",
       payload: null,
     });
+    setServicesForEdit([]);
     setBookingInfo({
       ...bookingInfo,
       timeBooked: null,
@@ -116,9 +117,19 @@ export const BookingsControlModal = ({
     setClientNamePlaceholder("");
     setOpen(false);
   };
+  const formatServicesArrForEdit = (data) => {
+    let arr = [];
+    if (data.actualService.length > 0) {
+      data.actualService.forEach((el) => arr.push(el.service));
+    } else if (data.mainService.length > 0) {
+      data.mainService.forEach((el) => arr.push(el.service));
+    }
+    return arr;
+  };
   const loadBookingForEdit = (id) => {
     return loadOneBooking(adminToken, id)
       .then((res) => {
+        console.log(res.data);
         setHourSelected(res.data.timeOfBooking);
         setBookingInfo({
           ...bookingInfo,
@@ -132,6 +143,7 @@ export const BookingsControlModal = ({
         setClientNamePlaceholder(
           `${res.data.client.first_name} ${res.data.client.last_name} - ${res.data.client.number}`
         );
+        setServicesForEdit(formatServicesArrForEdit(res.data.services));
       })
       .catch((err) => console.log(err));
   };
@@ -267,6 +279,7 @@ export const BookingsControlModal = ({
             />
             {/* PICK SERVICES AND PRICE*/}
             <ServicesPick
+              servicesForEdit={servicesForEdit}
               setBookingInfo={setBookingInfo}
               bookingInfo={bookingInfo}
               allServices={allServices}

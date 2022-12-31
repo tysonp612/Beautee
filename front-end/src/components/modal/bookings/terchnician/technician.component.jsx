@@ -22,6 +22,7 @@ export const TechnicianSection = ({
     <>
       Technician:
       <select
+        value={bookingInfo.worker}
         name="technicians"
         id="techicians"
         onChange={(e) =>

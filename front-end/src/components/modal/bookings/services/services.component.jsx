@@ -18,14 +18,23 @@ const MenuProps = {
   },
 };
 
-export const ServicesPick = ({ allServices, setBookingInfo, bookingInfo }) => {
+export const ServicesPick = ({
+  allServices,
+  setBookingInfo,
+  bookingInfo,
+  servicesForEdit,
+}) => {
   const [services, setServices] = useState([]);
   const [servicesName, setServicesName] = useState([]);
   useEffect(() => {
+    console.log(servicesForEdit);
     if (allServices.length > 0) {
+      if (servicesForEdit.length > 0) {
+        setServices(servicesForEdit);
+      }
       setServicesName(allServices);
     }
-  }, [allServices]);
+  }, [allServices, servicesForEdit]);
 
   const handleChange = (event) => {
     const {
