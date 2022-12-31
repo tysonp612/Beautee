@@ -27,7 +27,6 @@ export const ServicesPick = ({
   const [services, setServices] = useState([]);
   const [servicesName, setServicesName] = useState([]);
   useEffect(() => {
-    console.log(servicesForEdit);
     if (allServices.length > 0) {
       if (servicesForEdit.length > 0) {
         setServices(servicesForEdit);

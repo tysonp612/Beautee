@@ -53,7 +53,7 @@ export const BookingsControlModal = ({
     worker: "",
     services: [],
     price: "",
-    date: new Date(),
+    date: null,
     note: "",
   });
   const [clientSearch, setClientSearch] = useState([]);
@@ -71,7 +71,7 @@ export const BookingsControlModal = ({
           type: "ADD_EDIT_ID",
           payload: null,
         });
-        console.log("EDIT DETECTED");
+
         loadBookingForEdit(editIdSelected);
         setOpen(true);
       } else if (hourSelectedFromState) {
@@ -131,6 +131,7 @@ export const BookingsControlModal = ({
       .then((res) => {
         console.log(res.data);
         setHourSelected(res.data.timeOfBooking);
+
         setBookingInfo({
           ...bookingInfo,
           client: res.data.client._id,
@@ -139,6 +140,7 @@ export const BookingsControlModal = ({
           duration: res.data.period,
           date: res.data.date,
           price: res.data.price.estimatedPrice,
+          note: res.data.note,
         });
         setClientNamePlaceholder(
           `${res.data.client.first_name} ${res.data.client.last_name} - ${res.data.client.number}`
