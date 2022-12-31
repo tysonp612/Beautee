@@ -5,6 +5,7 @@ export const PickHour = ({
   setBookingInfo,
   totalOpenHour,
   hourSelected,
+  setHourSelected,
 }) => {
   const [dummyHour, setDummyHour] = useState(hourSelected);
   useEffect(() => {
@@ -37,7 +38,7 @@ export const PickHour = ({
           <select
             onChange={(e) => {
               setBookingInfo({ ...bookingInfo, timeBooked: +e.target.value });
-              console.log(bookingInfo);
+              setHourSelected(+e.target.value);
             }}
             name="startingHourSelect"
             value={dummyHour}
@@ -58,7 +59,7 @@ export const PickHour = ({
                 ...bookingInfo,
                 timeBooked: +e.target.value,
               });
-              console.log(bookingInfo.timeBooked);
+              setHourSelected(+e.target.value);
             }}
           >
             <option value={+dummyHour + 0}>{`${dummyHour}:00`}</option>

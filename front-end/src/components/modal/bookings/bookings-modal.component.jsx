@@ -10,8 +10,13 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 //UTILS
 import { findClient } from "./../../../utils/clients/clients.utils";
-import { createBooking } from "./../../../utils/bookings/bookings.utils";
-import { loadOneBooking } from "./../../../utils/bookings/bookings.utils";
+
+import {
+  createBooking,
+  loadOneBooking,
+  editBooking,
+} from "./../../../utils/bookings/bookings.utils";
+
 //COMPONENTS
 import { CreateClientModal } from "./create-client/create-client-modal.component";
 import { TechnicianSection } from "./terchnician/technician.component";
@@ -45,8 +50,9 @@ export const BookingsControlModal = ({
   const editIdSelected = useSelector((state) => state.bookings.editId);
   const [open, setOpen] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
-  const [hourSelected, setHourSelected] = useState(null);
+  const [hourSelected, setHourSelected] = useState("");
   const [bookingInfo, setBookingInfo] = useState({
+    id: null,
     timeBooked: null,
     client: null,
     duration: "",
@@ -67,11 +73,6 @@ export const BookingsControlModal = ({
   useEffect(() => {
     if (allTechnicians.length > 0) {
       if (editIdSelected) {
-        dispatch({
-          type: "ADD_EDIT_ID",
-          payload: null,
-        });
-
         loadBookingForEdit(editIdSelected);
         setOpen(true);
       } else if (hourSelectedFromState) {
@@ -85,7 +86,7 @@ export const BookingsControlModal = ({
         setBookingInfo({
           ...bookingInfo,
           worker: admin,
-          timeBooked: hourSelected,
+          timeBooked: hourSelectedFromState,
         });
       }
     }
@@ -102,7 +103,13 @@ export const BookingsControlModal = ({
       type: "ADD_HOUR",
       payload: null,
     });
+    dispatch({
+      type: "ADD_EDIT_ID",
+      payload: null,
+    });
+
     setServicesForEdit([]);
+    setHourSelected("");
     setBookingInfo({
       ...bookingInfo,
       timeBooked: null,
@@ -114,8 +121,10 @@ export const BookingsControlModal = ({
       date: null,
       note: "",
     });
+    setHideSearchBox(true);
     setClientNamePlaceholder("");
     setOpen(false);
+    setOpenCreateClientModal(true);
   };
   const formatServicesArrForEdit = (data) => {
     let arr = [];
@@ -129,16 +138,19 @@ export const BookingsControlModal = ({
   const loadBookingForEdit = (id) => {
     return loadOneBooking(adminToken, id)
       .then((res) => {
-        console.log(res.data);
         setHourSelected(res.data.timeOfBooking);
-
         setBookingInfo({
           ...bookingInfo,
+          id: res.data._id,
           client: res.data.client._id,
           worker: res.data.user._id,
           timeBooked: res.data.timeOfBooking,
           duration: res.data.period,
           date: res.data.date,
+          services:
+            res.data.services.actualService.length > 0
+              ? res.data.services.actualService
+              : res.data.services.mainService,
           price: res.data.price.estimatedPrice,
           note: res.data.note,
         });
@@ -152,7 +164,6 @@ export const BookingsControlModal = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     //DO VALIDATION
-
     if (!bookingInfo.client) {
       toast.error("Client is required!");
     } else if (bookingInfo.duration.length === 0) {
@@ -168,14 +179,23 @@ export const BookingsControlModal = ({
     ) {
       toast.error("Invalid date!");
     } else {
-      console.log(bookingInfo);
-      createBooking(adminToken, bookingInfo)
-        .then((res) => {
-          toast.success(res.data.message);
-          setOpen(false);
-          setReload(!reload);
-        })
-        .catch((err) => toast.error(err.response.data.message));
+      if (editIdSelected) {
+        editBooking(adminToken, bookingInfo)
+          .then((res) => {
+            toast.success(res.data.message);
+            handleClose();
+            setReload(!reload);
+          })
+          .catch((err) => toast.error(err.response.data.message));
+      } else {
+        createBooking(adminToken, bookingInfo)
+          .then((res) => {
+            toast.success(res.data.message);
+            handleClose();
+            setReload(!reload);
+          })
+          .catch((err) => toast.error(err.response.data.message));
+      }
     }
   };
   const handleFindClients = (keyword) => {
@@ -238,7 +258,6 @@ export const BookingsControlModal = ({
                   setHideSearchBox(false);
                 }}
                 onChange={(e) => {
-                  console.log(bookingInfo);
                   setClientNamePlaceholder(e.target.value);
                   handleFindClients(e.target.value);
                 }}
@@ -277,6 +296,7 @@ export const BookingsControlModal = ({
               totalOpenHour={totalOpenHour}
               setBookingInfo={setBookingInfo}
               bookingInfo={bookingInfo}
+              setHourSelected={setHourSelected}
               hourSelected={hourSelected}
             />
             {/* PICK SERVICES AND PRICE*/}

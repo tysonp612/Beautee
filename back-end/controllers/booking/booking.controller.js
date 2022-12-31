@@ -106,8 +106,8 @@ exports.updateBooking = async (req, res) => {
       client,
       worker,
       date,
-      time,
-      period,
+      timeBooked,
+      duration,
       services,
       price,
       note,
@@ -120,17 +120,19 @@ exports.updateBooking = async (req, res) => {
         client,
         user: worker,
         date,
-        timeOfBooking: time,
-        period,
+        timeOfBooking: timeBooked,
+        period: duration,
         services: { mainService: servicesArr },
         price: { estimatedPrice: price },
         note,
       },
       { new: true }
     );
-    res.status(200).json(updatedBooking);
+    res.status(200).json({ message: "Booking edited successfully!" });
   } catch (err) {
-    console.log(err);
+    res
+      .status(200)
+      .json({ message: "Booking edited failed, please try again!" });
   }
 };
 

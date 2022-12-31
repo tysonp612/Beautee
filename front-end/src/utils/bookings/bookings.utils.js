@@ -33,3 +33,15 @@ export const loadOneBooking = async (adminToken, bookingId) => {
     }
   );
 };
+
+export const editBooking = async (adminToken, bookingData) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/booking_updateBooking`,
+    { bookingData },
+    {
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+      },
+    }
+  );
+};
