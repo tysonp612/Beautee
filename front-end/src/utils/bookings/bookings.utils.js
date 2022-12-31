@@ -22,3 +22,14 @@ export const createBooking = async (adminToken, bookingData) => {
     }
   );
 };
+export const loadOneBooking = async (adminToken, bookingId) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/booking_getOneBooking`,
+    { id: bookingId },
+    {
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+      },
+    }
+  );
+};

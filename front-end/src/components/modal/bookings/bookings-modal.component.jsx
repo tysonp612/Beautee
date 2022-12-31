@@ -1,12 +1,18 @@
+//MAIN REACT METHOD AND STYLES
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { toast } from "react-toastify";
 import "./bookings-modal.style.css";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
+//TOAST
+import { toast } from "react-toastify";
+
 import { useEffect } from "react";
+//UTILS
 import { findClient } from "./../../../utils/clients/clients.utils";
 import { createBooking } from "./../../../utils/bookings/bookings.utils";
+import { loadOneBooking } from "./../../../utils/bookings/bookings.utils";
+//COMPONENTS
 import { CreateClientModal } from "./create-client/create-client-modal.component";
 import { TechnicianSection } from "./terchnician/technician.component";
 import { PickHour } from "./pick-hour/pick-hour.component";
@@ -33,13 +39,15 @@ export const BookingsControlModal = ({
   setReload,
 }) => {
   //DECLARE VARIABLES
-  const hourSelected = useSelector((state) => state.bookings.hourAdded);
-
+  const hourSelectedFromState = useSelector(
+    (state) => state.bookings.hourAdded
+  );
+  const editIdSelected = useSelector((state) => state.bookings.editId);
   const [open, setOpen] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
-
+  const [hourSelected, setHourSelected] = useState(null);
   const [bookingInfo, setBookingInfo] = useState({
-    timeBooked: hourSelected,
+    timeBooked: null,
     client: null,
     duration: "",
     worker: "",
@@ -57,16 +65,36 @@ export const BookingsControlModal = ({
   const adminToken = useSelector((state) => state.user.currentUser.token);
 
   useEffect(() => {
-    if (hourSelected && allTechnicians.length > 0) {
-      const admin = allTechnicians.find((el) => el.role === "admin")._id;
-      setOpen(true);
-      setBookingInfo({
-        ...bookingInfo,
-        worker: admin,
-        timeBooked: hourSelected,
-      });
+    if (allTechnicians.length > 0) {
+      if (editIdSelected) {
+        dispatch({
+          type: "ADD_EDIT_ID",
+          payload: null,
+        });
+        console.log("EDIT DETECTED");
+        loadBookingForEdit(editIdSelected);
+        setOpen(true);
+      } else if (hourSelectedFromState) {
+        dispatch({
+          type: "ADD_HOUR",
+          payload: null,
+        });
+        setHourSelected(hourSelectedFromState);
+        const admin = allTechnicians.find((el) => el.role === "admin")._id;
+        setOpen(true);
+        setBookingInfo({
+          ...bookingInfo,
+          worker: admin,
+          timeBooked: hourSelected,
+        });
+      }
     }
-  }, [hourSelected, openCreateClientModal, clientSearch]);
+  }, [
+    hourSelectedFromState,
+    openCreateClientModal,
+    clientSearch,
+    editIdSelected,
+  ]);
 
   //HANDLE
   const handleClose = () => {
@@ -88,6 +116,25 @@ export const BookingsControlModal = ({
     setClientNamePlaceholder("");
     setOpen(false);
   };
+  const loadBookingForEdit = (id) => {
+    return loadOneBooking(adminToken, id)
+      .then((res) => {
+        setHourSelected(res.data.timeOfBooking);
+        setBookingInfo({
+          ...bookingInfo,
+          client: res.data.client._id,
+          worker: res.data.user._id,
+          timeBooked: res.data.timeOfBooking,
+          duration: res.data.period,
+          date: res.data.date,
+          price: res.data.price.estimatedPrice,
+        });
+        setClientNamePlaceholder(
+          `${res.data.client.first_name} ${res.data.client.last_name} - ${res.data.client.number}`
+        );
+      })
+      .catch((err) => console.log(err));
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     //DO VALIDATION
@@ -102,7 +149,9 @@ export const BookingsControlModal = ({
       toast.error("Price is required!");
     } else if (bookingInfo.price === 0) {
       toast.error("Price must be larger than $0");
-    } else if (new Date() > Date.parse(bookingInfo.date)) {
+    } else if (
+      Date.parse(new Date().toDateString()) > Date.parse(bookingInfo.date)
+    ) {
       toast.error("Invalid date!");
     } else {
       console.log(bookingInfo);

@@ -9,7 +9,11 @@ export const PickHour = ({
   const [dummyHour, setDummyHour] = useState(hourSelected);
   useEffect(() => {
     if (hourSelected) {
-      setDummyHour(hourSelected);
+      if (hourSelected.toString().includes(".")) {
+        setDummyHour(hourSelected.toString().split(".")[0]);
+      } else {
+        setDummyHour(hourSelected);
+      }
     }
   }, [hourSelected]);
   const renderTotalHour = () => {
@@ -32,7 +36,6 @@ export const PickHour = ({
           Hour select
           <select
             onChange={(e) => {
-              setDummyHour(+e.target.value);
               setBookingInfo({ ...bookingInfo, timeBooked: +e.target.value });
               console.log(bookingInfo);
             }}
@@ -47,19 +50,21 @@ export const PickHour = ({
         <div className="starting-minutes-section">
           Minutes select
           <select
+            value={bookingInfo.timeBooked}
             name="startingMinutesSelect"
             id="startingMinutesSelect"
-            onChange={(e) =>
+            onChange={(e) => {
               setBookingInfo({
                 ...bookingInfo,
-                timeBooked: dummyHour + Number(e.target.value),
-              })
-            }
+                timeBooked: +e.target.value,
+              });
+              console.log(bookingInfo.timeBooked);
+            }}
           >
-            <option value="0">{`${dummyHour}:00`}</option>
-            <option value="0.25">{`${dummyHour}:15`}</option>
-            <option value="0.50">{`${dummyHour}:30`}</option>
-            <option value="0.75">{`${dummyHour}:45`}</option>
+            <option value={+dummyHour + 0}>{`${dummyHour}:00`}</option>
+            <option value={+dummyHour + 0.25}>{`${dummyHour}:15`}</option>
+            <option value={+dummyHour + 0.5}>{`${dummyHour}:30`}</option>
+            <option value={+dummyHour + 0.75}>{`${dummyHour}:45`}</option>
           </select>
         </div>
       </div>

@@ -1,11 +1,14 @@
 import { BookingsActionTypes } from "./bookings.types";
 const INITIAL_STATE = {
   hourAdded: null,
+  editId: null,
 };
 export const bookingsReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case BookingsActionTypes.ADD_HOUR:
       return { ...state, hourAdded: action.payload };
+    case BookingsActionTypes.ADD_EDIT_ID:
+      return { ...state, editId: action.payload };
     default:
       return state;
   }

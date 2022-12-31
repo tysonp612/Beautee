@@ -158,7 +158,14 @@ export const GridComponent = ({
           {/* //ADMIN CONDITIONALLY RENDER */}
           {userRole === "admin" ? (
             <div className="booking-option">
-              <div className="option">EDIT</div>
+              <div
+                className="option"
+                onClick={(e) =>
+                  dispatch({ type: "ADD_EDIT_ID", payload: booking._id })
+                }
+              >
+                EDIT
+              </div>
               <div className="option">DELETE</div>
             </div>
           ) : (
