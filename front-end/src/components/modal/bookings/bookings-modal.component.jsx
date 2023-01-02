@@ -35,7 +35,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-
+//General ideal: each part contains its own purpose, like hour pick, technician pick, date pick, note ,services, price...
 export const BookingsControlModal = ({
   totalOpenHour,
   allTechnicians,
@@ -71,11 +71,17 @@ export const BookingsControlModal = ({
   const adminToken = useSelector((state) => state.user.currentUser.token);
 
   useEffect(() => {
-    if (allTechnicians.length > 0) {
+    //1. As the page loads, first check if all technician and services are loaded
+    if (allTechnicians.length > 0 && allServices.length > 0) {
+      //2. Check if it's an order for creating booking or edit booking
+      //if it's edit (user clicked on edit button, an id is stored in state and will be checked as the page loads, if we can extract that id, it means it is an edit order, if not, it is for creating new booking)
       if (editIdSelected) {
+        // if it is for edit, run this function to load set information for editting
         loadBookingForEdit(editIdSelected);
+        //open the modal
         setOpen(true);
       } else if (hourSelectedFromState) {
+        //set state to null,
         dispatch({
           type: "ADD_HOUR",
           payload: null,
@@ -83,6 +89,7 @@ export const BookingsControlModal = ({
         setHourSelected(hourSelectedFromState);
         const admin = allTechnicians.find((el) => el.role === "admin")._id;
         setOpen(true);
+        //if it's new booking, some fixed information is the default technician(worker) and the time chosen (extract from state)
         setBookingInfo({
           ...bookingInfo,
           worker: admin,
@@ -91,6 +98,7 @@ export const BookingsControlModal = ({
       }
     }
   }, [
+    //page will change under these conditions: hour changed, when new client modal is opened, when new client is found, or edit Id is changed
     hourSelectedFromState,
     openCreateClientModal,
     clientSearch,
@@ -126,6 +134,7 @@ export const BookingsControlModal = ({
     setOpen(false);
     setOpenCreateClientModal(true);
   };
+  //*** Remake this as a helper
   const formatServicesArrForEdit = (data) => {
     let arr = [];
     if (data.actualService.length > 0) {
@@ -135,6 +144,7 @@ export const BookingsControlModal = ({
     }
     return arr;
   };
+  //Set state for edit booking
   const loadBookingForEdit = (id) => {
     return loadOneBooking(adminToken, id)
       .then((res) => {
@@ -154,6 +164,7 @@ export const BookingsControlModal = ({
           price: res.data.price.estimatedPrice,
           note: res.data.note,
         });
+        //2 things that needed to workaround are client name and services
         setClientNamePlaceholder(
           `${res.data.client.first_name} ${res.data.client.last_name} - ${res.data.client.number}`
         );
@@ -203,17 +214,22 @@ export const BookingsControlModal = ({
       .then((res) => setClientSearch(res.data.client))
       .catch((err) => console.log(err));
   };
+  //*** REWORK AS A COMPONENT
   const renderFindClients = () => {
     let clientsArr = [];
+    //after sending request to BE, data will be stored in clientSearch
     if (clientSearch) {
       clientSearch.forEach((el) =>
+        //forEach of the client object, push as a div element with all needed information, this will be used as search box showing all result of client, also clickable to choose the client
         clientsArr.push(
           <div
             className="client-pick-container"
             style={{ cursor: "pointer" }}
             key={el._id}
             onClick={(e) => {
+              //client's id is stored in main bookingInfo state
               setBookingInfo({ ...bookingInfo, client: el._id });
+              // Another state (clientNamePlaceholder)This is needed to render to search bar, see line 268
               setClientNamePlaceholder(
                 `${el.first_name} ${el.last_name} - ${el.number}`
               );
@@ -225,6 +241,7 @@ export const BookingsControlModal = ({
         )
       );
     } else {
+      //if not client is found, with same array, push the no client found and 1 option to open create client modal
       clientsArr.push(
         <div key={"N/A"}>
           <div>No Customer found</div>
@@ -248,21 +265,25 @@ export const BookingsControlModal = ({
         <div className="modal-input-wrapper">
           <div className="modal-input-container">
             <div className="customer-search-section">
+              {/* input value cannot be set directly to bookingInfo.client because we store client's id, not name, so we need to workaround on this one with clientNamePlaceholder, this basically means as we click on client in the search box, we store the name in placeholder state, then use it as value for the input, while the id is stored in bookingInfo */}
               <input
                 className="searchBox-input"
                 type="text"
                 value={clientNamePlaceholder}
                 placeholder="Search customers"
+                //As user click on the input box at first, it will fire a request to backend with value of " ", this ensure that even before user type anything, we will render all client in DB
                 onClick={() => {
                   handleFindClients(" ");
                   setHideSearchBox(false);
                 }}
                 onChange={(e) => {
+                  //Change the value on input box as letter changes, also send value to BE to find client matches with value
                   setClientNamePlaceholder(e.target.value);
                   handleFindClients(e.target.value);
                 }}
               />
               <div hidden={hideSearchBox} className="searchBox">
+                {/* This is where we trigger the render search box function, this will show the search box with all client clickable option */}
                 {renderFindClients()}
                 <div
                   style={{ textAlign: "center", cursor: "pointer" }}

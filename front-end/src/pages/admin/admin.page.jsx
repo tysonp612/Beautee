@@ -33,6 +33,7 @@ export const AdminPage = () => {
         .catch((err) => console.log(err));
     }
   };
+  //To create bookings, start in admin page, load all technicians, all services, total open hour, pass it to Booking control modal componenet
   const getTechnicians = () => {
     return getAllTechnicians(adminToken)
       .then((res) => {
@@ -68,6 +69,7 @@ export const AdminPage = () => {
         reload={reload}
       />
       <DatePickerComponent setDate={setDate} />
+      {/* THIS PART IS FOR CREATE BOOKINGS AND EDIT BOOKINGS */}
       <BookingsControlModal
         totalOpenHour={totalOpenHour}
         allTechnicians={allTechnicians}
