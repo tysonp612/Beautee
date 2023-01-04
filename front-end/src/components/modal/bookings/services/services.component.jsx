@@ -26,6 +26,11 @@ export const ServicesPick = ({
 }) => {
   const [services, setServices] = useState([]);
   const [servicesName, setServicesName] = useState([]);
+  const calculateTotal = (services) => {
+    return services
+      .map((el) => el.price)
+      .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+  };
   useEffect(() => {
     if (allServices.length > 0) {
       if (servicesForEdit.length > 0) {
@@ -79,16 +84,6 @@ export const ServicesPick = ({
             ))}
         </Select>
       </FormControl>
-      <div className="price-section">
-        Price:
-        <input
-          type="text"
-          value={bookingInfo.price}
-          onChange={(e) =>
-            setBookingInfo({ ...bookingInfo, price: +e.target.value })
-          }
-        />
-      </div>
     </div>
   );
 };

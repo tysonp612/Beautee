@@ -1,13 +1,14 @@
 //MAIN REACT METHOD AND STYLES
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./bookings-modal.style.css";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 //TOAST
 import { toast } from "react-toastify";
+//HELPER
+import { getFormattedTime } from "./../../../helper/format-hour";
 
-import { useEffect } from "react";
 //UTILS
 import { findClient } from "./../../../utils/clients/clients.utils";
 
@@ -24,13 +25,16 @@ import { PickHour } from "./pick-hour/pick-hour.component";
 import { ServicesPick } from "./services/services.component";
 import { BookingDatePickerComponent } from "./date/booking-date-picker.component";
 import { NoteComponent } from "./note/booking-note.component";
+import { DurationPick } from "./duration/duration.component";
+import { Price } from "./price/price.component";
+import { Comment } from "./comment/comment.component";
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "40vw",
-  height: "90vh",
+  height: "80vh",
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
@@ -44,6 +48,19 @@ export const BookingsControlModal = ({
   setReload,
 }) => {
   //DECLARE VARIABLES
+  const [bookingInfo, setBookingInfo] = useState({
+    id: null,
+    timeBooked: null,
+    client: null,
+    duration: "",
+    worker: "",
+    services: [],
+    price: "",
+    actualPrice: "",
+    comment: "",
+    date: null,
+    note: "",
+  });
   const hourSelectedFromState = useSelector(
     (state) => state.bookings.hourAdded
   );
@@ -55,24 +72,17 @@ export const BookingsControlModal = ({
   const [openShowBookingModal, setOpenShowBookingModal] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
   const [hourSelected, setHourSelected] = useState("");
-  const [bookingInfo, setBookingInfo] = useState({
-    id: null,
-    timeBooked: null,
-    client: null,
-    duration: "",
-    worker: "",
-    services: [],
-    price: "",
-    date: null,
-    note: "",
-  });
+  const [technicianNamePlaceholder, setTechnicianNamePlaceholder] = useState(
+    ""
+  );
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
   const [clientNamePlaceholder, setClientNamePlaceholder] = useState("");
   const [servicesForEdit, setServicesForEdit] = useState([]);
+
   const dispatch = useDispatch();
 
-  const adminToken = useSelector((state) => state.user.currentUser.token);
+  const userToken = useSelector((state) => state.user.currentUser.token);
   const currentUser = useSelector((state) => state.user.currentUser);
 
   useEffect(() => {
@@ -82,15 +92,8 @@ export const BookingsControlModal = ({
       //if it's edit (user clicked on edit button, an id is stored in state and will be checked as the page loads, if we can extract that id, it means it is an edit order, if not, it is for creating new booking)
       if (editIdSelected && currentUser.role === "admin") {
         // if it is for edit, run this function to load set information for editting
-        loadBookingForEdit(editIdSelected);
-        //open the modal
-        setOpen(true);
+        loadBookingData(editIdSelected, "edit");
       } else if (hourSelectedFromState && currentUser.role === "admin") {
-        //set state to null,
-        dispatch({
-          type: "ADD_HOUR",
-          payload: null,
-        });
         setHourSelected(hourSelectedFromState);
 
         setOpen(true);
@@ -101,7 +104,7 @@ export const BookingsControlModal = ({
           timeBooked: hourSelectedFromState,
         });
       } else if (showBookingIdSelected) {
-        setOpenShowBookingModal(true);
+        loadBookingData(showBookingIdSelected, "show-booking");
       }
     }
   }, [
@@ -130,13 +133,16 @@ export const BookingsControlModal = ({
     setHourSelected("");
     setBookingInfo({
       ...bookingInfo,
+      id: null,
       timeBooked: null,
       client: null,
       duration: "",
       worker: "",
       services: [],
       price: "",
+      actualPrice: "",
       date: null,
+      comment: "",
       note: "",
     });
     setHideSearchBox(true);
@@ -156,9 +162,10 @@ export const BookingsControlModal = ({
     return arr;
   };
   //Set state for edit booking
-  const loadBookingForEdit = (id) => {
-    return loadOneBooking(adminToken, id)
+  const loadBookingData = (id, type) => {
+    return loadOneBooking(userToken, id)
       .then((res) => {
+        console.log(res.data);
         setHourSelected(res.data.timeOfBooking);
         setBookingInfo({
           ...bookingInfo,
@@ -168,18 +175,28 @@ export const BookingsControlModal = ({
           timeBooked: res.data.timeOfBooking,
           duration: res.data.period,
           date: res.data.date,
+          price: res.data.price.estimatedPrice,
           services:
             res.data.services.actualService.length > 0
               ? res.data.services.actualService
               : res.data.services.mainService,
-          price: res.data.price.estimatedPrice,
+          actualPrice: res.data.price.actualPrice
+            ? res.data.price.actualPrice
+            : res.data.price.estimatedPrice,
           note: res.data.note,
         });
         //2 things that needed to workaround are client name and services
         setClientNamePlaceholder(
           `${res.data.client.first_name} ${res.data.client.last_name} - ${res.data.client.number}`
         );
+        setTechnicianNamePlaceholder(`${res.data.user.username}`);
         setServicesForEdit(formatServicesArrForEdit(res.data.services));
+        if (type === "edit") {
+          //open the edit modal
+          setOpen(true);
+        } else if (type === "show-booking") {
+          setOpenShowBookingModal(true);
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -203,7 +220,7 @@ export const BookingsControlModal = ({
       toast.error("Invalid date!");
     } else {
       if (editIdSelected) {
-        editBooking(adminToken, bookingInfo)
+        editBooking(userToken, bookingInfo)
           .then((res) => {
             toast.success(res.data.message);
             handleClose();
@@ -211,7 +228,7 @@ export const BookingsControlModal = ({
           })
           .catch((err) => toast.error(err.response.data.message));
       } else {
-        createBooking(adminToken, bookingInfo)
+        createBooking(userToken, bookingInfo)
           .then((res) => {
             toast.success(res.data.message);
             handleClose();
@@ -222,7 +239,7 @@ export const BookingsControlModal = ({
     }
   };
   const handleFindClients = (keyword) => {
-    return findClient(adminToken, keyword)
+    return findClient(userToken, keyword)
       .then((res) => setClientSearch(res.data.client))
       .catch((err) => console.log(err));
   };
@@ -272,6 +289,7 @@ export const BookingsControlModal = ({
   };
   return (
     <>
+      {/* THIS MODAL IS FOR CREATING/EDITING BOOKINGS */}
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <div className="modal-title">Schedule Booking</div>
@@ -333,12 +351,22 @@ export const BookingsControlModal = ({
                 setHourSelected={setHourSelected}
                 hourSelected={hourSelected}
               />
+              {/* PICK DURATION */}
+              <DurationPick
+                setBookingInfo={setBookingInfo}
+                bookingInfo={bookingInfo}
+              />
               {/* PICK SERVICES AND PRICE*/}
               <ServicesPick
                 servicesForEdit={servicesForEdit}
                 setBookingInfo={setBookingInfo}
                 bookingInfo={bookingInfo}
                 allServices={allServices}
+              />
+              {/* PRICE */}
+              <Price
+                setBookingInfo={setBookingInfo}
+                bookingInfo={bookingInfo}
               />
               {/* DATE-PICK */}
               <BookingDatePickerComponent
@@ -349,7 +377,7 @@ export const BookingsControlModal = ({
                 setBookingInfo={setBookingInfo}
                 bookingInfo={bookingInfo}
               />
-              <div className="submit-button-sec">
+              <div className="submit-button-section">
                 <button onClick={(e) => handleSubmit(e)}>Submit</button>
               </div>
             </div>
@@ -364,7 +392,63 @@ export const BookingsControlModal = ({
         </Box>
       </Modal>
       <Modal open={openShowBookingModal} onClose={handleClose}>
-        <Box sx={style}></Box>
+        <Box sx={style}>
+          {bookingInfo.id && (
+            <>
+              Date booked: {bookingInfo.date.split("T")[0]}
+              <br />
+              Client's name: {clientNamePlaceholder.split("-")[0]}
+              <br />
+              Time booked: {getFormattedTime(hourSelected)} <br />
+              Technician: {technicianNamePlaceholder} <br />
+              *NOTE: {bookingInfo.note}
+              <div className="showBooking-update">
+                <DurationPick
+                  setBookingInfo={setBookingInfo}
+                  bookingInfo={bookingInfo}
+                />
+                <button className="showBooking-update-button">Update</button>
+              </div>
+              <div className="showBooking-update">
+                <ServicesPick
+                  servicesForEdit={servicesForEdit}
+                  setBookingInfo={setBookingInfo}
+                  bookingInfo={bookingInfo}
+                  allServices={allServices}
+                />
+                <button
+                  className="showBooking-update-button"
+                  id="showBooking-services-update-button"
+                >
+                  Update
+                </button>
+              </div>
+              <div className="showBooking-update">
+                <Price
+                  setBookingInfo={setBookingInfo}
+                  bookingInfo={bookingInfo}
+                />
+                <button className="showBooking-update-button">Update</button>
+              </div>
+              <div className="showBooking-update">
+                <Comment
+                  setBookingInfo={setBookingInfo}
+                  bookingInfo={bookingInfo}
+                />
+                <button
+                  className="showBooking-update-button"
+                  id="showBooking-comment-update-button"
+                >
+                  Add comment
+                </button>
+              </div>
+              <p>TOTAL : ${bookingInfo.actualPrice}</p>
+              <button onClick={(e) => console.log(bookingInfo)}>
+                Confirm price and send to Front Desk
+              </button>
+            </>
+          )}
+        </Box>
       </Modal>
     </>
   );

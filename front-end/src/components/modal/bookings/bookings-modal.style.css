@@ -10,3 +10,19 @@
 .searchBox-input {
   width: 60%;
 }
+.showBooking-update {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+#showBooking-services-update-button {
+  height: 50px;
+  margin: auto 0;
+}
+#showBooking-comment-update-button {
+  height: 50px;
+  margin: auto 0;
+}
+.showBooking-update-button {
+  cursor: pointer;
+}

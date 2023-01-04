@@ -86,11 +86,19 @@ exports.getOneBooking = async (req, res) => {
       })
       .populate({
         path: "services.mainService",
-        select: "service price",
+        select: "service",
       })
       .populate({
         path: "services.actualService",
-        select: "service price",
+        select: "service",
+      })
+      .populate({
+        path: "price.estimatedPrice",
+        select: "price",
+      })
+      .populate({
+        path: "price.actualPrice",
+        select: "price",
       });
 
     res.status(200).json(booking);
