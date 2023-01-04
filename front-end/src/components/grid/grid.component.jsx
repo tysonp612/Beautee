@@ -93,7 +93,7 @@ export const GridComponent = ({
     //Wait for the hourData array to load
     if (hourData.length > 0) {
       let timeToAdd;
-      console.log();
+
       //loop through the array, find the element matches with the time, then extract its gridStart position
       const startGrid = hourData.find((el) => el.hour === booking.timeOfBooking)
         .gridStart;
@@ -136,10 +136,18 @@ export const GridComponent = ({
             color: `${
               booking.user ? getContrast(booking.user.color) : "white"
             }`,
-            // overflow: "scroll",
           }}
         >
-          <div className="booking-text">
+          <div
+            className="booking-text"
+            style={{ cursor: `${userRole === "admin" ? "pointer" : ""}` }}
+            onClick={(e) => {
+              dispatch({
+                type: BookingsActionTypes.ADD_SHOW_BOOKING_ID,
+                payload: booking._id,
+              });
+            }}
+          >
             Time booked: {getFormattedTime(booking.timeOfBooking)} <br />{" "}
             Client's name:{" "}
             {`${booking.client.first_name} ${booking.client.last_name}`}

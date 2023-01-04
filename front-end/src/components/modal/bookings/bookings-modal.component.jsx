@@ -48,7 +48,11 @@ export const BookingsControlModal = ({
     (state) => state.bookings.hourAdded
   );
   const editIdSelected = useSelector((state) => state.bookings.editId);
+  const showBookingIdSelected = useSelector(
+    (state) => state.bookings.showBookingId
+  );
   const [open, setOpen] = useState(false);
+  const [openShowBookingModal, setOpenShowBookingModal] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
   const [hourSelected, setHourSelected] = useState("");
   const [bookingInfo, setBookingInfo] = useState({
@@ -69,38 +73,42 @@ export const BookingsControlModal = ({
   const dispatch = useDispatch();
 
   const adminToken = useSelector((state) => state.user.currentUser.token);
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   useEffect(() => {
     //1. As the page loads, first check if all technician and services are loaded
     if (allTechnicians.length > 0 && allServices.length > 0) {
       //2. Check if it's an order for creating booking or edit booking
       //if it's edit (user clicked on edit button, an id is stored in state and will be checked as the page loads, if we can extract that id, it means it is an edit order, if not, it is for creating new booking)
-      if (editIdSelected) {
+      if (editIdSelected && currentUser.role === "admin") {
         // if it is for edit, run this function to load set information for editting
         loadBookingForEdit(editIdSelected);
         //open the modal
         setOpen(true);
-      } else if (hourSelectedFromState) {
+      } else if (hourSelectedFromState && currentUser.role === "admin") {
         //set state to null,
         dispatch({
           type: "ADD_HOUR",
           payload: null,
         });
         setHourSelected(hourSelectedFromState);
-        const admin = allTechnicians.find((el) => el.role === "admin")._id;
+
         setOpen(true);
         //if it's new booking, some fixed information is the default technician(worker) and the time chosen (extract from state)
         setBookingInfo({
           ...bookingInfo,
-          worker: admin,
+          worker: currentUser.id,
           timeBooked: hourSelectedFromState,
         });
+      } else if (showBookingIdSelected) {
+        setOpenShowBookingModal(true);
       }
     }
   }, [
     //page will change under these conditions: hour changed, when new client modal is opened, when new client is found, or edit Id is changed
     hourSelectedFromState,
     editIdSelected,
+    showBookingIdSelected,
   ]);
 
   //HANDLE
@@ -111,6 +119,10 @@ export const BookingsControlModal = ({
     });
     dispatch({
       type: "ADD_EDIT_ID",
+      payload: null,
+    });
+    dispatch({
+      type: "ADD_SHOW_BOOKING_ID",
       payload: null,
     });
 
@@ -131,6 +143,7 @@ export const BookingsControlModal = ({
     setClientNamePlaceholder("");
     setOpen(false);
     setOpenCreateClientModal(true);
+    setOpenShowBookingModal(false);
   };
   //*** Remake this as a helper
   const formatServicesArrForEdit = (data) => {
@@ -258,96 +271,101 @@ export const BookingsControlModal = ({
     return clientsArr;
   };
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
-        <div className="modal-title">Schedule Booking</div>
-        <div className="modal-input-wrapper">
-          <div className="modal-input-container">
-            <div className="customer-search-section">
-              {/* input value cannot be set directly to bookingInfo.client because we store client's id, not name, so we need to workaround on this one with clientNamePlaceholder, this basically means as we click on client in the search box, we store the name in placeholder state, then use it as value for the input, while the id is stored in bookingInfo */}
-              <input
-                className="searchBox-input"
-                type="text"
-                value={clientNamePlaceholder}
-                placeholder="Search customers"
-                //As user click on the input box at first, it will fire a request to backend with value of " ", this ensure that even before user type anything, we will render all client in DB
-                onClick={() => {
-                  handleFindClients(" ");
-                  setHideSearchBox(false);
-                }}
-                onChange={(e) => {
-                  //Change the value on input box as letter changes, also send value to BE to find client matches with value
-                  setClientNamePlaceholder(e.target.value);
-                  handleFindClients(e.target.value);
-                }}
-              />
-              <div hidden={hideSearchBox} className="searchBox">
-                {/* This is where we trigger the render search box function, this will show the search box with all client clickable option */}
-                {renderFindClients()}
-                <div
-                  style={{ textAlign: "center", cursor: "pointer" }}
-                  onClick={(e) => setHideSearchBox(true)}
-                >
-                  X
+    <>
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={style}>
+          <div className="modal-title">Schedule Booking</div>
+          <div className="modal-input-wrapper">
+            <div className="modal-input-container">
+              <div className="customer-search-section">
+                {/* input value cannot be set directly to bookingInfo.client because we store client's id, not name, so we need to workaround on this one with clientNamePlaceholder, this basically means as we click on client in the search box, we store the name in placeholder state, then use it as value for the input, while the id is stored in bookingInfo */}
+                <input
+                  className="searchBox-input"
+                  type="text"
+                  value={clientNamePlaceholder}
+                  placeholder="Search customers"
+                  //As user click on the input box at first, it will fire a request to backend with value of " ", this ensure that even before user type anything, we will render all client in DB
+                  onClick={() => {
+                    handleFindClients(" ");
+                    setHideSearchBox(false);
+                  }}
+                  onChange={(e) => {
+                    //Change the value on input box as letter changes, also send value to BE to find client matches with value
+                    setClientNamePlaceholder(e.target.value);
+                    handleFindClients(e.target.value);
+                  }}
+                />
+                <div hidden={hideSearchBox} className="searchBox">
+                  {/* This is where we trigger the render search box function, this will show the search box with all client clickable option */}
+                  {renderFindClients()}
+                  <div
+                    style={{ textAlign: "center", cursor: "pointer" }}
+                    onClick={(e) => setHideSearchBox(true)}
+                  >
+                    X
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* CREATE-CLIENT */}
-            <div className="create-client-section">
-              <p
-                style={{ cursor: "pointer" }}
-                onClick={(e) => {
-                  setHideSearchBox(true);
-                  setOpenCreateClientModal(false);
-                }}
-              >
-                Cant find user, click here to create user
-              </p>
-            </div>
-            {/* PICK TECHICIANS */}
+              {/* CREATE-CLIENT */}
+              <div className="create-client-section">
+                <p
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => {
+                    setHideSearchBox(true);
+                    setOpenCreateClientModal(false);
+                  }}
+                >
+                  Cant find user, click here to create user
+                </p>
+              </div>
+              {/* PICK TECHICIANS */}
 
-            <TechnicianSection
-              setBookingInfo={setBookingInfo}
-              bookingInfo={bookingInfo}
-              allTechnicians={allTechnicians}
-            />
-            {/* PICK-HOUR */}
-            <PickHour
-              totalOpenHour={totalOpenHour}
-              setBookingInfo={setBookingInfo}
-              bookingInfo={bookingInfo}
-              setHourSelected={setHourSelected}
-              hourSelected={hourSelected}
-            />
-            {/* PICK SERVICES AND PRICE*/}
-            <ServicesPick
-              servicesForEdit={servicesForEdit}
-              setBookingInfo={setBookingInfo}
-              bookingInfo={bookingInfo}
-              allServices={allServices}
-            />
-            {/* DATE-PICK */}
-            <BookingDatePickerComponent
-              setBookingInfo={setBookingInfo}
-              bookingInfo={bookingInfo}
-            />
-            <NoteComponent
-              setBookingInfo={setBookingInfo}
-              bookingInfo={bookingInfo}
-            />
-            <div className="submit-button-sec">
-              <button onClick={(e) => handleSubmit(e)}>Submit</button>
+              <TechnicianSection
+                setBookingInfo={setBookingInfo}
+                bookingInfo={bookingInfo}
+                allTechnicians={allTechnicians}
+              />
+              {/* PICK-HOUR */}
+              <PickHour
+                totalOpenHour={totalOpenHour}
+                setBookingInfo={setBookingInfo}
+                bookingInfo={bookingInfo}
+                setHourSelected={setHourSelected}
+                hourSelected={hourSelected}
+              />
+              {/* PICK SERVICES AND PRICE*/}
+              <ServicesPick
+                servicesForEdit={servicesForEdit}
+                setBookingInfo={setBookingInfo}
+                bookingInfo={bookingInfo}
+                allServices={allServices}
+              />
+              {/* DATE-PICK */}
+              <BookingDatePickerComponent
+                setBookingInfo={setBookingInfo}
+                bookingInfo={bookingInfo}
+              />
+              <NoteComponent
+                setBookingInfo={setBookingInfo}
+                bookingInfo={bookingInfo}
+              />
+              <div className="submit-button-sec">
+                <button onClick={(e) => handleSubmit(e)}>Submit</button>
+              </div>
             </div>
           </div>
-        </div>
-        <CreateClientModal
-          setOpenCreateClientModal={setOpenCreateClientModal}
-          openCreateClientModal={openCreateClientModal}
-          setClientNamePlaceholder={setClientNamePlaceholder}
-          setBookingInfo={setBookingInfo}
-          bookingInfo={bookingInfo}
-        />
-      </Box>
-    </Modal>
+          <CreateClientModal
+            setOpenCreateClientModal={setOpenCreateClientModal}
+            openCreateClientModal={openCreateClientModal}
+            setClientNamePlaceholder={setClientNamePlaceholder}
+            setBookingInfo={setBookingInfo}
+            bookingInfo={bookingInfo}
+          />
+        </Box>
+      </Modal>
+      <Modal open={openShowBookingModal} onClose={handleClose}>
+        <Box sx={style}></Box>
+      </Modal>
+    </>
   );
 };
