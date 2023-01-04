@@ -100,8 +100,6 @@ export const BookingsControlModal = ({
   }, [
     //page will change under these conditions: hour changed, when new client modal is opened, when new client is found, or edit Id is changed
     hourSelectedFromState,
-    openCreateClientModal,
-    clientSearch,
     editIdSelected,
   ]);
 
@@ -186,6 +184,7 @@ export const BookingsControlModal = ({
     } else if (bookingInfo.price === 0) {
       toast.error("Price must be larger than $0");
     } else if (
+      !bookingInfo.date ||
       Date.parse(new Date().toDateString()) > Date.parse(bookingInfo.date)
     ) {
       toast.error("Invalid date!");

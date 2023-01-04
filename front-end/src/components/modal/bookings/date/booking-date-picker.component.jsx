@@ -13,6 +13,10 @@ export function BookingDatePickerComponent({ setBookingInfo, bookingInfo }) {
       setValue(bookingInfo.date);
     } else {
       setValue(new Date());
+      setBookingInfo({
+        ...bookingInfo,
+        date: new Date().toDateString(),
+      });
     }
   }, [bookingInfo]);
   return (

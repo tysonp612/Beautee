@@ -136,7 +136,7 @@ export const GridComponent = ({
             color: `${
               booking.user ? getContrast(booking.user.color) : "white"
             }`,
-            overflow: "scroll",
+            // overflow: "scroll",
           }}
         >
           <div className="booking-text">

@@ -25,7 +25,6 @@ exports.createBooking = async (req, res) => {
       timeOfBooking: timeBooked,
       note,
     }).save();
-
     res
       .status(200)
       .json({ message: "A reservation has been created successfully!" });
@@ -57,6 +56,7 @@ exports.getAllBookings = async (req, res) => {
         path: "services.actualService",
         select: "service price",
       });
+
     res.status(200).json(bookings);
   } catch (err) {
     console.log(err);
