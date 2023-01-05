@@ -275,7 +275,7 @@ exports.sendBookingToAdmin = async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json("Booking sent");
+    res.status(200).json({ message: "Booking sent" });
   } catch (err) {
     console.log(err);
   }

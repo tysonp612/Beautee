@@ -57,3 +57,15 @@ export const userUpdateBooking = async (userToken, id, type, value) => {
     }
   );
 };
+
+export const sendToAdmin = async (userToken, bookingId, data) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/booking_sendBookingToAdmin`,
+    { bookingId: bookingId, data: data },
+    {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    }
+  );
+};

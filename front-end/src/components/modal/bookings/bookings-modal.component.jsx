@@ -8,7 +8,7 @@ import Modal from "@mui/material/Modal";
 import { toast } from "react-toastify";
 //HELPER
 import { getFormattedTime } from "./../../../helper/format-hour";
-
+import { renderMessages } from "./../../../helper/renderMessages";
 //UTILS
 import { findClient } from "./../../../utils/clients/clients.utils";
 
@@ -17,6 +17,7 @@ import {
   loadOneBooking,
   editBooking,
   userUpdateBooking,
+  sendToAdmin,
 } from "./../../../utils/bookings/bookings.utils";
 
 //COMPONENTS
@@ -55,10 +56,12 @@ export const BookingsControlModal = ({
     client: null,
     duration: "",
     worker: "",
+    initialServices: [],
     services: [],
     price: "",
     actualPrice: "",
     comment: "",
+    messages: [],
     date: null,
     note: "",
   });
@@ -95,6 +98,10 @@ export const BookingsControlModal = ({
       if (editIdSelected && currentUser.role === "admin") {
         // if it is for edit, run this function to load set information for editting
         loadBookingData(editIdSelected, "edit");
+        dispatch({
+          type: "ADD_EDIT_ID",
+          payload: null,
+        });
       } else if (hourSelectedFromState && currentUser.role === "admin") {
         setHourSelected(hourSelectedFromState);
 
@@ -105,8 +112,16 @@ export const BookingsControlModal = ({
           worker: currentUser.id,
           timeBooked: hourSelectedFromState,
         });
+        dispatch({
+          type: "ADD_HOUR",
+          payload: null,
+        });
       } else if (showBookingIdSelected) {
         loadBookingData(showBookingIdSelected, "show-booking");
+        dispatch({
+          type: "ADD_SHOW_BOOKING_ID",
+          payload: null,
+        });
       }
     }
   }, [
@@ -141,6 +156,8 @@ export const BookingsControlModal = ({
       duration: "",
       worker: "",
       services: [],
+      messages: [],
+      initialServices: [],
       price: "",
       actualPrice: "",
       date: null,
@@ -177,6 +194,8 @@ export const BookingsControlModal = ({
           timeBooked: res.data.timeOfBooking,
           duration: res.data.period,
           date: res.data.date,
+          messages: res.data.technicianMessages,
+          initialServices: res.data.services.mainService,
           price: res.data.price.actualPrice
             ? res.data.price.actualPrice
             : res.data.price.estimatedPrice,
@@ -205,7 +224,7 @@ export const BookingsControlModal = ({
       .catch((err) => console.log(err));
   };
   const handleUserUpdate = (type, value) => {
-    return userUpdateBooking(userToken, showBookingIdSelected, type, value)
+    return userUpdateBooking(userToken, bookingInfo.id, type, value)
       .then((res) => {
         if (res.data.type === "services") {
           setServicesForRender(
@@ -223,12 +242,29 @@ export const BookingsControlModal = ({
         } else if (res.data.type === "message") {
           setBookingInfo({
             ...bookingInfo,
-            comment: res.data.data.technicianMessages,
+            comment: "",
+            messages: res.data.data.technicianMessages,
           });
         }
         toast.success(res.data.message);
       })
       .catch((err) => toast.error(err.response.data.message));
+  };
+  const handleSendToAdmin = (e) => {
+    e.preventDefault();
+    let data = {
+      finalPeriod: bookingInfo.duration,
+      finalServices: bookingInfo.services,
+      finalPrice: bookingInfo.actualPrice,
+      finalMessages: bookingInfo.messages,
+      initialServices: bookingInfo.initialServices,
+    };
+    return sendToAdmin(userToken, bookingInfo.id, data)
+      .then((res) => {
+        toast.success(res.data.message);
+        handleClose();
+      })
+      .catch((err) => console.log(err));
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -268,6 +304,7 @@ export const BookingsControlModal = ({
       }
     }
   };
+
   const handleFindClients = (keyword) => {
     return findClient(userToken, keyword)
       .then((res) => setClientSearch(res.data.client))
@@ -492,8 +529,13 @@ export const BookingsControlModal = ({
                   Add comment
                 </button>
               </div>
+              <p>
+                Message:
+                {bookingInfo.messages.length > 0 &&
+                  renderMessages(bookingInfo.messages)}
+              </p>
               <p>TOTAL : ${bookingInfo.actualPrice}</p>
-              <button onClick={(e) => console.log(bookingInfo)}>
+              <button onClick={(e) => handleSendToAdmin(e)}>
                 Confirm price and send to Front Desk
               </button>
             </>
