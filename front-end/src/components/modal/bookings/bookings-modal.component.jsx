@@ -16,6 +16,7 @@ import {
   createBooking,
   loadOneBooking,
   editBooking,
+  userUpdateBooking,
 } from "./../../../utils/bookings/bookings.utils";
 
 //COMPONENTS
@@ -68,6 +69,7 @@ export const BookingsControlModal = ({
   const showBookingIdSelected = useSelector(
     (state) => state.bookings.showBookingId
   );
+  const [rerender, setRerender] = useState(false);
   const [open, setOpen] = useState(false);
   const [openShowBookingModal, setOpenShowBookingModal] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
@@ -78,7 +80,7 @@ export const BookingsControlModal = ({
   const [clientSearch, setClientSearch] = useState([]);
   const [openCreateClientModal, setOpenCreateClientModal] = useState(true);
   const [clientNamePlaceholder, setClientNamePlaceholder] = useState("");
-  const [servicesForEdit, setServicesForEdit] = useState([]);
+  const [servicesForRender, setServicesForRender] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -112,6 +114,7 @@ export const BookingsControlModal = ({
     hourSelectedFromState,
     editIdSelected,
     showBookingIdSelected,
+    rerender,
   ]);
 
   //HANDLE
@@ -129,7 +132,7 @@ export const BookingsControlModal = ({
       payload: null,
     });
 
-    setServicesForEdit([]);
+    setServicesForRender([]);
     setHourSelected("");
     setBookingInfo({
       ...bookingInfo,
@@ -165,7 +168,6 @@ export const BookingsControlModal = ({
   const loadBookingData = (id, type) => {
     return loadOneBooking(userToken, id)
       .then((res) => {
-        console.log(res.data);
         setHourSelected(res.data.timeOfBooking);
         setBookingInfo({
           ...bookingInfo,
@@ -175,7 +177,9 @@ export const BookingsControlModal = ({
           timeBooked: res.data.timeOfBooking,
           duration: res.data.period,
           date: res.data.date,
-          price: res.data.price.estimatedPrice,
+          price: res.data.price.actualPrice
+            ? res.data.price.actualPrice
+            : res.data.price.estimatedPrice,
           services:
             res.data.services.actualService.length > 0
               ? res.data.services.actualService
@@ -190,7 +194,7 @@ export const BookingsControlModal = ({
           `${res.data.client.first_name} ${res.data.client.last_name} - ${res.data.client.number}`
         );
         setTechnicianNamePlaceholder(`${res.data.user.username}`);
-        setServicesForEdit(formatServicesArrForEdit(res.data.services));
+        setServicesForRender(formatServicesArrForEdit(res.data.services));
         if (type === "edit") {
           //open the edit modal
           setOpen(true);
@@ -199,6 +203,34 @@ export const BookingsControlModal = ({
         }
       })
       .catch((err) => console.log(err));
+  };
+  const handleUserUpdate = (type, value) => {
+    return userUpdateBooking(userToken, showBookingIdSelected, type, value)
+      .then((res) => {
+        if (type === "services") {
+          setServicesForRender(
+            formatServicesArrForEdit(res.data.data.services)
+          );
+          setBookingInfo({
+            ...bookingInfo,
+            services: res.data.data.services.actualService,
+          });
+        } else if (type === "price") {
+          setBookingInfo({
+            ...bookingInfo,
+            actualPrice: res.data.data.price.actualPrice,
+          });
+        } else if (type === "message") {
+          setBookingInfo({
+            ...bookingInfo,
+            comment: res.data.data.technicianMessages,
+          });
+        }
+        toast.success(res.data.message);
+        setReload(!reload);
+        setRerender(!rerender);
+      })
+      .catch((err) => toast.error(err.response.data.message));
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -358,7 +390,7 @@ export const BookingsControlModal = ({
               />
               {/* PICK SERVICES AND PRICE*/}
               <ServicesPick
-                servicesForEdit={servicesForEdit}
+                servicesForRender={servicesForRender}
                 setBookingInfo={setBookingInfo}
                 bookingInfo={bookingInfo}
                 allServices={allServices}
@@ -407,11 +439,18 @@ export const BookingsControlModal = ({
                   setBookingInfo={setBookingInfo}
                   bookingInfo={bookingInfo}
                 />
-                <button className="showBooking-update-button">Update</button>
+                <button
+                  className="showBooking-update-button"
+                  onClick={(e) =>
+                    handleUserUpdate("periodUpdate", bookingInfo.duration)
+                  }
+                >
+                  Update
+                </button>
               </div>
               <div className="showBooking-update">
                 <ServicesPick
-                  servicesForEdit={servicesForEdit}
+                  servicesForRender={servicesForRender}
                   setBookingInfo={setBookingInfo}
                   bookingInfo={bookingInfo}
                   allServices={allServices}
@@ -419,6 +458,9 @@ export const BookingsControlModal = ({
                 <button
                   className="showBooking-update-button"
                   id="showBooking-services-update-button"
+                  onClick={(e) =>
+                    handleUserUpdate("servicesUpdate", bookingInfo.services)
+                  }
                 >
                   Update
                 </button>
@@ -428,7 +470,14 @@ export const BookingsControlModal = ({
                   setBookingInfo={setBookingInfo}
                   bookingInfo={bookingInfo}
                 />
-                <button className="showBooking-update-button">Update</button>
+                <button
+                  className="showBooking-update-button"
+                  onClick={(e) =>
+                    handleUserUpdate("priceUpdate", bookingInfo.price)
+                  }
+                >
+                  Update
+                </button>
               </div>
               <div className="showBooking-update">
                 <Comment
@@ -438,6 +487,9 @@ export const BookingsControlModal = ({
                 <button
                   className="showBooking-update-button"
                   id="showBooking-comment-update-button"
+                  onClick={(e) =>
+                    handleUserUpdate("addMessages", bookingInfo.comment)
+                  }
                 >
                   Add comment
                 </button>

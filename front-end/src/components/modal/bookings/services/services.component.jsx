@@ -22,23 +22,19 @@ export const ServicesPick = ({
   allServices,
   setBookingInfo,
   bookingInfo,
-  servicesForEdit,
+  servicesForRender,
 }) => {
   const [services, setServices] = useState([]);
   const [servicesName, setServicesName] = useState([]);
-  const calculateTotal = (services) => {
-    return services
-      .map((el) => el.price)
-      .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-  };
+
   useEffect(() => {
     if (allServices.length > 0) {
-      if (servicesForEdit.length > 0) {
-        setServices(servicesForEdit);
+      if (servicesForRender.length > 0) {
+        setServices(servicesForRender);
       }
       setServicesName(allServices);
     }
-  }, [allServices, servicesForEdit]);
+  }, [allServices, servicesForRender]);
 
   const handleChange = (event) => {
     const {

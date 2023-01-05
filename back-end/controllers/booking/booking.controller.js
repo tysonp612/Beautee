@@ -187,10 +187,14 @@ exports.userUpdateBooking = async (req, res) => {
         },
         { new: true }
       ).populate({
-        path: "services.mainService",
-        select: "service price",
+        path: "services.actualService",
+        select: "service",
       });
-      res.status(200).json(updatedBooking);
+      res.status(200).json({
+        type: "services",
+        data: updatedBooking,
+        message: "Services updated sucessfully!",
+      });
     } else if (type === "periodUpdate") {
       const bookingPeriodUpdate = await Bookings.findByIdAndUpdate(
         id,
@@ -199,7 +203,7 @@ exports.userUpdateBooking = async (req, res) => {
         },
         { new: true }
       );
-      res.status(200).json(bookingPeriodUpdate.period);
+      res.status(200).json({ message: "Duration updated succesfully!" });
     } else if (type === "priceUpdate") {
       const bookingPriceUpdate = await Bookings.findByIdAndUpdate(
         id,
@@ -209,7 +213,11 @@ exports.userUpdateBooking = async (req, res) => {
         { new: true }
       );
 
-      res.status(200).json(bookingPriceUpdate.price.actualPrice);
+      res.status(200).json({
+        type: "price",
+        message: "Price updated succesfully!",
+        data: bookingPriceUpdate,
+      });
     } else if (type === "addMessages") {
       const bookingMessagesUpdate = await Bookings.findByIdAndUpdate(
         id,
@@ -219,7 +227,11 @@ exports.userUpdateBooking = async (req, res) => {
         { new: true }
       );
 
-      res.status(200).json(bookingMessagesUpdate.technicianMessages);
+      res.status(200).json({
+        type: "message",
+        message: "Messages added succesfully!",
+        data: bookingMessagesUpdate,
+      });
     } else if (type === "calculatingPayingTotal") {
       const bookingUpdatePayingTotal = await Bookings.findByIdAndUpdate(
         id,
@@ -232,7 +244,7 @@ exports.userUpdateBooking = async (req, res) => {
       res.status(200).json(bookingUpdatePayingTotal.totalPayment);
     }
   } catch (err) {
-    console.log(err);
+    res.status(500).json({ message: "Error!, please try again" });
   }
 };
 
