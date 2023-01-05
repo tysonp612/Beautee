@@ -203,7 +203,11 @@ exports.userUpdateBooking = async (req, res) => {
         },
         { new: true }
       );
-      res.status(200).json({ message: "Duration updated succesfully!" });
+      res.status(200).json({
+        type: "duration",
+        data: bookingPeriodUpdate,
+        message: "Duration updated sucessfully!",
+      });
     } else if (type === "priceUpdate") {
       const bookingPriceUpdate = await Bookings.findByIdAndUpdate(
         id,

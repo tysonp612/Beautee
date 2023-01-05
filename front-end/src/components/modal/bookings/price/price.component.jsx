@@ -5,11 +5,10 @@ export const Price = ({ setBookingInfo, bookingInfo }) => {
     <div className="price-section">
       Price:$
       <input
-        type="number"
-        min="0"
+        type="text"
         value={bookingInfo.price}
         onChange={(e) => {
-          setBookingInfo({ ...bookingInfo, price: +e.target.value });
+          setBookingInfo({ ...bookingInfo, price: e.target.value });
         }}
       />
     </div>

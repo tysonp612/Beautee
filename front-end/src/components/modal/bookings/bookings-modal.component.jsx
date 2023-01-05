@@ -69,7 +69,7 @@ export const BookingsControlModal = ({
   const showBookingIdSelected = useSelector(
     (state) => state.bookings.showBookingId
   );
-  const [rerender, setRerender] = useState(false);
+
   const [open, setOpen] = useState(false);
   const [openShowBookingModal, setOpenShowBookingModal] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
@@ -114,7 +114,6 @@ export const BookingsControlModal = ({
     hourSelectedFromState,
     editIdSelected,
     showBookingIdSelected,
-    rerender,
   ]);
 
   //HANDLE
@@ -153,6 +152,7 @@ export const BookingsControlModal = ({
     setOpen(false);
     setOpenCreateClientModal(true);
     setOpenShowBookingModal(false);
+    setReload(!reload);
   };
   //*** Remake this as a helper
   const formatServicesArrForEdit = (data) => {
@@ -207,7 +207,7 @@ export const BookingsControlModal = ({
   const handleUserUpdate = (type, value) => {
     return userUpdateBooking(userToken, showBookingIdSelected, type, value)
       .then((res) => {
-        if (type === "services") {
+        if (res.data.type === "services") {
           setServicesForRender(
             formatServicesArrForEdit(res.data.data.services)
           );
@@ -215,20 +215,18 @@ export const BookingsControlModal = ({
             ...bookingInfo,
             services: res.data.data.services.actualService,
           });
-        } else if (type === "price") {
+        } else if (res.data.type === "price") {
           setBookingInfo({
             ...bookingInfo,
             actualPrice: res.data.data.price.actualPrice,
           });
-        } else if (type === "message") {
+        } else if (res.data.type === "message") {
           setBookingInfo({
             ...bookingInfo,
             comment: res.data.data.technicianMessages,
           });
         }
         toast.success(res.data.message);
-        setReload(!reload);
-        setRerender(!rerender);
       })
       .catch((err) => toast.error(err.response.data.message));
   };
