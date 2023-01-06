@@ -10,3 +10,9 @@ export const addEdit = (editId) => {
 export const addShowBooking = (bookingId) => {
   return { type: BookingsActionTypes.ADD_SHOW_BOOKING_ID, payload: bookingId };
 };
+export const addShowBooking = (bookingId) => {
+  return {
+    type: BookingsActionTypes.ADD_OPEN_PAYMENT_MODAL_ID,
+    payload: bookingId,
+  };
+};

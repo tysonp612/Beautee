@@ -171,10 +171,17 @@ export const GridComponent = ({
             }}
             onClick={(e) => {
               if (booking.status !== "Finished") {
-                dispatch({
-                  type: BookingsActionTypes.ADD_SHOW_BOOKING_ID,
-                  payload: booking._id,
-                });
+                if (userRole === "admin" && booking.status === "Ready") {
+                  dispatch({
+                    type: BookingsActionTypes.ADD_OPEN_PAYMENT_MODAL_ID,
+                    payload: booking._id,
+                  });
+                } else {
+                  dispatch({
+                    type: BookingsActionTypes.ADD_SHOW_BOOKING_ID,
+                    payload: booking._id,
+                  });
+                }
               }
             }}
           >

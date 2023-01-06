@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 //HELPER
 import { getFormattedTime } from "./../../../helper/format-hour";
 import { renderMessages } from "./../../../helper/renderMessages";
+import { formatServices } from "./../../../helper/format-services";
 //UTILS
 import { findClient } from "./../../../utils/clients/clients.utils";
 
@@ -72,9 +73,13 @@ export const BookingsControlModal = ({
   const showBookingIdSelected = useSelector(
     (state) => state.bookings.showBookingId
   );
+  const paymentModalIdSelected = useSelector(
+    (state) => state.bookings.openPaymentModalId
+  );
 
   const [open, setOpen] = useState(false);
   const [openShowBookingModal, setOpenShowBookingModal] = useState(false);
+  const [openPaymentInfoModal, setOpenPaymentInfoModal] = useState(false);
   const [hideSearchBox, setHideSearchBox] = useState(true);
   const [hourSelected, setHourSelected] = useState("");
   const [technicianNamePlaceholder, setTechnicianNamePlaceholder] = useState(
@@ -118,6 +123,8 @@ export const BookingsControlModal = ({
         });
       } else if (showBookingIdSelected) {
         loadBookingData(showBookingIdSelected, "show-booking");
+      } else if (paymentModalIdSelected) {
+        loadBookingData(paymentModalIdSelected, "payment-info");
       }
     }
   }, [
@@ -125,6 +132,7 @@ export const BookingsControlModal = ({
     hourSelectedFromState,
     editIdSelected,
     showBookingIdSelected,
+    paymentModalIdSelected,
   ]);
 
   //HANDLE
@@ -141,7 +149,10 @@ export const BookingsControlModal = ({
       type: "ADD_SHOW_BOOKING_ID",
       payload: null,
     });
-
+    dispatch({
+      type: "ADD_OPEN_PAYMENT_MODAL_ID",
+      payload: null,
+    });
     setServicesForRender([]);
     setHourSelected("");
     setBookingInfo({
@@ -164,6 +175,7 @@ export const BookingsControlModal = ({
     setClientNamePlaceholder("");
     setOpen(false);
     setOpenCreateClientModal(true);
+    setOpenPaymentInfoModal(false);
     setOpenShowBookingModal(false);
     setReload(!reload);
   };
@@ -181,6 +193,7 @@ export const BookingsControlModal = ({
   const loadBookingData = (id, type) => {
     return loadOneBooking(userToken, id)
       .then((res) => {
+        console.log(res);
         setHourSelected(res.data.timeOfBooking);
         setBookingInfo({
           ...bookingInfo,
@@ -215,6 +228,8 @@ export const BookingsControlModal = ({
           setOpen(true);
         } else if (type === "show-booking") {
           setOpenShowBookingModal(true);
+        } else if (type === "payment-info") {
+          setOpenPaymentInfoModal(true);
         }
       })
       .catch((err) => console.log(err));
@@ -456,6 +471,7 @@ export const BookingsControlModal = ({
       </Modal>
       <Modal open={openShowBookingModal} onClose={handleClose}>
         <Box sx={style}>
+          <h2>BOOKING DETAILS</h2>
           {bookingInfo.id && (
             <>
               Date booked: {bookingInfo.date.split("T")[0]}
@@ -534,6 +550,31 @@ export const BookingsControlModal = ({
               <button onClick={(e) => handleSendToAdmin(e)}>
                 Confirm price and send to Front Desk
               </button>
+            </>
+          )}
+        </Box>
+      </Modal>
+
+      {/* PaymentINFO */}
+      <Modal open={openPaymentInfoModal} onClose={handleClose}>
+        <Box sx={style}>
+          <h2>PAYMENT INFO</h2>
+          {bookingInfo.id && (
+            <>
+              Date booked: {bookingInfo.date.split("T")[0]}
+              <br />
+              Client's info: {clientNamePlaceholder}
+              <br />
+              Time booked: {getFormattedTime(hourSelected)}
+              <br />
+              Services: {servicesForRender.join(", ")}
+              <br />
+              Technician: {technicianNamePlaceholder} <br />
+              Messages: {bookingInfo.messages.join(", ")}
+              <br />
+              Note: {bookingInfo.note}
+              <br />
+              Price: ${bookingInfo.actualPrice}
             </>
           )}
         </Box>
