@@ -98,10 +98,6 @@ export const BookingsControlModal = ({
       if (editIdSelected && currentUser.role === "admin") {
         // if it is for edit, run this function to load set information for editting
         loadBookingData(editIdSelected, "edit");
-        dispatch({
-          type: "ADD_EDIT_ID",
-          payload: null,
-        });
       } else if (hourSelectedFromState && currentUser.role === "admin") {
         setHourSelected(hourSelectedFromState);
 
@@ -112,16 +108,8 @@ export const BookingsControlModal = ({
           worker: currentUser.id,
           timeBooked: hourSelectedFromState,
         });
-        dispatch({
-          type: "ADD_HOUR",
-          payload: null,
-        });
       } else if (showBookingIdSelected) {
         loadBookingData(showBookingIdSelected, "show-booking");
-        dispatch({
-          type: "ADD_SHOW_BOOKING_ID",
-          payload: null,
-        });
       }
     }
   }, [

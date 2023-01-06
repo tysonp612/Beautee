@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import { BookingsActionTypes } from "./../../redux/reducers/bookings/bookings.types";
+import { deleteBooking } from "./../../utils/bookings/bookings.utils";
 //Contrast color helper
 import { getContrast } from "./../../helper/contrast-color";
+
 import { getFormattedTime } from "./../../helper/format-hour";
 import { formatServices } from "./../../helper/format-services";
 import "./grid.style.css";
@@ -13,6 +16,8 @@ export const GridComponent = ({
   closeHour,
   allBookings,
   userRole,
+  adminToken,
+  setReload,
 }) => {
   let totalOpeningHour = closeHour - openHour;
   const dispatch = useDispatch();
@@ -23,6 +28,19 @@ export const GridComponent = ({
     renderHour();
     renderBookings();
   }, [totalOpeningHour, allBookings, reload]);
+  const deleteBookingHandler = (userId, bookingId) => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this booking?"
+    );
+    if (confirm) {
+      return deleteBooking(userId, bookingId)
+        .then((res) => {
+          toast.success(res.data.message);
+          setReload(!reload);
+        })
+        .catch((err) => toast.error(err.response.data.message));
+    }
+  };
   //1. calculate the total amount of opening hour
   const renderHour = () => {
     let openHourArr = [];
@@ -132,7 +150,11 @@ export const GridComponent = ({
           style={{
             gridColumnStart: `${startGrid}`,
             gridColumnEnd: `${startGrid + timeToAdd}`,
-            backgroundColor: `${booking.user ? booking.user.color : "blue"}`,
+            background: `${
+              booking.user && booking.status !== "Finished"
+                ? booking.user.color
+                : "linear-gradient(135deg, #999999 25%, #616161 25%, #616161 50%, #999999 50%, #999999 75%, #616161 75%, #616161 100%)"
+            }`,
             color: `${
               booking.user ? getContrast(booking.user.color) : "white"
             }`,
@@ -140,12 +162,20 @@ export const GridComponent = ({
         >
           <div
             className="booking-text"
-            style={{ cursor: `${userRole === "admin" ? "pointer" : ""}` }}
+            style={{
+              cursor: `${
+                userRole === "admin" && booking.status !== "Finished"
+                  ? "pointer"
+                  : ""
+              }`,
+            }}
             onClick={(e) => {
-              dispatch({
-                type: BookingsActionTypes.ADD_SHOW_BOOKING_ID,
-                payload: booking._id,
-              });
+              if (userRole === "admin" && booking.status !== "Finished") {
+                dispatch({
+                  type: BookingsActionTypes.ADD_SHOW_BOOKING_ID,
+                  payload: booking._id,
+                });
+              }
             }}
           >
             Time booked: {getFormattedTime(booking.timeOfBooking)} <br />{" "}
@@ -164,7 +194,9 @@ export const GridComponent = ({
             Note: {booking.note}
           </div>
           {/* //ADMIN CONDITIONALLY RENDER */}
-          {userRole === "admin" ? (
+          {userRole === "admin" &&
+          booking.status !== "Ready" &&
+          booking.status !== "Finished" ? (
             <div className="booking-option">
               <div
                 className="option"
@@ -174,7 +206,12 @@ export const GridComponent = ({
               >
                 EDIT
               </div>
-              <div className="option">DELETE</div>
+              <div
+                className="option"
+                onClick={(e) => deleteBookingHandler(adminToken, booking._id)}
+              >
+                DELETE
+              </div>
             </div>
           ) : (
             ""

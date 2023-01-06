@@ -61,7 +61,19 @@ export const userUpdateBooking = async (userToken, id, type, value) => {
 export const sendToAdmin = async (userToken, bookingId, data) => {
   return await axios.post(
     `${process.env.REACT_APP_API}/booking_sendBookingToAdmin`,
-    { bookingId: bookingId, data: data },
+    { id: bookingId, data: data },
+    {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    }
+  );
+};
+
+export const deleteBooking = async (userToken, bookingId) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/booking_deleteBooking`,
+    { id: bookingId },
     {
       headers: {
         Authorization: `Bearer ${userToken}`,

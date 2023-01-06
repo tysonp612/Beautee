@@ -67,6 +67,8 @@ export const AdminPage = () => {
         allBookings={allBookings}
         userRole={userRole}
         reload={reload}
+        setReload={setReload}
+        adminToken={adminToken}
       />
       <DatePickerComponent setDate={setDate} />
       {/* THIS PART IS FOR CREATE BOOKINGS AND EDIT BOOKINGS */}
