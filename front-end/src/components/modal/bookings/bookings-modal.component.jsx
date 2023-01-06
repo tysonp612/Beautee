@@ -92,13 +92,21 @@ export const BookingsControlModal = ({
 
   useEffect(() => {
     //1. As the page loads, first check if all technician and services are loaded
-    if (allTechnicians.length > 0 && allServices.length > 0) {
+    if (allServices.length > 0) {
       //2. Check if it's an order for creating booking or edit booking
       //if it's edit (user clicked on edit button, an id is stored in state and will be checked as the page loads, if we can extract that id, it means it is an edit order, if not, it is for creating new booking)
-      if (editIdSelected && currentUser.role === "admin") {
+      if (
+        editIdSelected &&
+        currentUser.role === "admin" &&
+        allTechnicians.length > 0
+      ) {
         // if it is for edit, run this function to load set information for editting
         loadBookingData(editIdSelected, "edit");
-      } else if (hourSelectedFromState && currentUser.role === "admin") {
+      } else if (
+        hourSelectedFromState &&
+        currentUser.role === "admin" &&
+        allTechnicians.length > 0
+      ) {
         setHourSelected(hourSelectedFromState);
 
         setOpen(true);

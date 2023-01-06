@@ -41,3 +41,11 @@
 .option {
   cursor: pointer;
 }
+.booking-text {
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+}
+#booking-grid-text {
+  padding: 3%;
+}

@@ -22,13 +22,13 @@ export const createBooking = async (adminToken, bookingData) => {
     }
   );
 };
-export const loadOneBooking = async (adminToken, bookingId) => {
+export const loadOneBooking = async (userToken, bookingId) => {
   return await axios.post(
     `${process.env.REACT_APP_API}/booking_getOneBooking`,
     { id: bookingId },
     {
       headers: {
-        Authorization: `Bearer ${adminToken}`,
+        Authorization: `Bearer ${userToken}`,
       },
     }
   );
@@ -74,6 +74,21 @@ export const deleteBooking = async (userToken, bookingId) => {
   return await axios.post(
     `${process.env.REACT_APP_API}/booking_deleteBooking`,
     { id: bookingId },
+    {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    }
+  );
+};
+//USER
+export const loadAllUserBookings = async (userToken, userId, date) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/booking_loadUserBookings`,
+    {
+      id: userId,
+      date: date,
+    },
     {
       headers: {
         Authorization: `Bearer ${userToken}`,

@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { BookingsActionTypes } from "./../../redux/reducers/bookings/bookings.types";
 import { deleteBooking } from "./../../utils/bookings/bookings.utils";
+//MU
+import Badge from "@mui/material/Badge";
 //Contrast color helper
 import { getContrast } from "./../../helper/contrast-color";
 
@@ -16,7 +18,7 @@ export const GridComponent = ({
   closeHour,
   allBookings,
   userRole,
-  adminToken,
+  userToken,
   setReload,
 }) => {
   let totalOpeningHour = closeHour - openHour;
@@ -73,12 +75,14 @@ export const GridComponent = ({
           key={i * 4 + 1}
           listid={i * 4 + 1}
           //IF ADMIN CLICK ON THE HOUR, MAKING A DISPATCH TO SAVE THE HOUR
-          onClick={() =>
-            dispatch({
-              type: BookingsActionTypes.ADD_HOUR,
-              payload: el,
-            })
-          }
+          onClick={() => {
+            if (userRole === "admin") {
+              dispatch({
+                type: BookingsActionTypes.ADD_HOUR,
+                payload: el,
+              });
+            }
+          }}
           style={{
             cursor: `${userRole === "admin" ? "pointer" : ""}`,
             gridColumnStart: `${i * 4 + 1}`,
@@ -163,14 +167,10 @@ export const GridComponent = ({
           <div
             className="booking-text"
             style={{
-              cursor: `${
-                userRole === "admin" && booking.status !== "Finished"
-                  ? "pointer"
-                  : ""
-              }`,
+              cursor: `${booking.status !== "Finished" ? "pointer" : ""}`,
             }}
             onClick={(e) => {
-              if (userRole === "admin" && booking.status !== "Finished") {
+              if (booking.status !== "Finished") {
                 dispatch({
                   type: BookingsActionTypes.ADD_SHOW_BOOKING_ID,
                   payload: booking._id,
@@ -178,20 +178,28 @@ export const GridComponent = ({
               }
             }}
           >
-            Time booked: {getFormattedTime(booking.timeOfBooking)} <br />{" "}
-            Client's name:{" "}
-            {`${booking.client.first_name} ${booking.client.last_name}`}
-            {userRole === "admin" ? (
-              <>
-                <br /> Client's number: {booking.client.number}
-              </>
+            <div id="booking-grid-text">
+              Time booked: {getFormattedTime(booking.timeOfBooking)} <br />{" "}
+              Client's name:{" "}
+              {`${booking.client.first_name} ${booking.client.last_name}`}
+              {userRole === "admin" ? (
+                <>
+                  <br /> Client's number: {booking.client.number}
+                </>
+              ) : (
+                ""
+              )}
+              <br />
+              Services booked: {formatServices(booking.services)} <br />
+              Nail tech: {booking.user ? booking.user.username : "NULL"} <br />
+              Note: {booking.note}
+            </div>
+
+            {booking.status === "Ready" ? (
+              <Badge badgeContent={"READY"} color="primary" className="a" />
             ) : (
               ""
             )}
-            <br />
-            Services booked: {formatServices(booking.services)} <br />
-            Nail tech: {booking.user ? booking.user.username : "NULL"} <br />
-            Note: {booking.note}
           </div>
           {/* //ADMIN CONDITIONALLY RENDER */}
           {userRole === "admin" &&
@@ -208,7 +216,7 @@ export const GridComponent = ({
               </div>
               <div
                 className="option"
-                onClick={(e) => deleteBookingHandler(adminToken, booking._id)}
+                onClick={(e) => deleteBookingHandler(userToken, booking._id)}
               >
                 DELETE
               </div>

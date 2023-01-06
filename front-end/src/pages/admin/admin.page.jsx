@@ -16,7 +16,7 @@ export const AdminPage = () => {
   const [allTechnicians, setAllTechnicians] = useState([]);
   const [allServices, setAllServices] = useState([]);
   const [date, setDate] = useState();
-  const adminToken = useSelector((state) => state.user.currentUser.token);
+  const userToken = useSelector((state) => state.user.currentUser.token);
   const userRole = useSelector((state) => state.user.currentUser.role);
 
   //   As the page loads, load all the bookings from DB
@@ -28,14 +28,14 @@ export const AdminPage = () => {
   }, [date, reload]);
   const getAllBookings = () => {
     if (date) {
-      return loadAllBookings(adminToken, date.toDateString())
+      return loadAllBookings(userToken, date.toDateString())
         .then((res) => setAllBookings(res.data))
         .catch((err) => console.log(err));
     }
   };
   //To create bookings, start in admin page, load all technicians, all services, total open hour, pass it to Booking control modal componenet
   const getTechnicians = () => {
-    return getAllTechnicians(adminToken)
+    return getAllTechnicians(userToken)
       .then((res) => {
         setAllTechnicians(res.data.users);
       })
@@ -68,7 +68,7 @@ export const AdminPage = () => {
         userRole={userRole}
         reload={reload}
         setReload={setReload}
-        adminToken={adminToken}
+        userToken={userToken}
       />
       <DatePickerComponent setDate={setDate} />
       {/* THIS PART IS FOR CREATE BOOKINGS AND EDIT BOOKINGS */}
