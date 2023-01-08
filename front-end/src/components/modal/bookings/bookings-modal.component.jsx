@@ -80,6 +80,7 @@ export const BookingsControlModal = ({
   const [open, setOpen] = useState(false);
   const [openShowBookingModal, setOpenShowBookingModal] = useState(false);
   const [openPaymentInfoModal, setOpenPaymentInfoModal] = useState(false);
+  const [hiddenTip, setHiddenTip] = useState(true);
   const [hideSearchBox, setHideSearchBox] = useState(true);
   const [hourSelected, setHourSelected] = useState("");
   const [technicianNamePlaceholder, setTechnicianNamePlaceholder] = useState(
@@ -188,6 +189,15 @@ export const BookingsControlModal = ({
       data.mainService.forEach((el) => arr.push(el.service));
     }
     return arr;
+  };
+  //Handle tip
+  const handleTip = (value) => {
+    if (value === "other") {
+      setHiddenTip(false);
+    } else {
+      console.log(value);
+      setHiddenTip(true);
+    }
   };
   //Set state for edit booking
   const loadBookingData = (id, type) => {
@@ -561,9 +571,9 @@ export const BookingsControlModal = ({
           <h2>PAYMENT INFO</h2>
           {bookingInfo.id && (
             <>
-              Date booked: {bookingInfo.date.split("T")[0]}
-              <br />
               Client's info: {clientNamePlaceholder}
+              <br />
+              Date booked: {bookingInfo.date.split("T")[0]}
               <br />
               Time booked: {getFormattedTime(hourSelected)}
               <br />
@@ -575,6 +585,27 @@ export const BookingsControlModal = ({
               Note: {bookingInfo.note}
               <br />
               Price: ${bookingInfo.actualPrice}
+              <hr />
+              Tip:
+              <select
+                onChange={(e) => handleTip(e.target.value)}
+                name="tip"
+                id="tip"
+              >
+                <option value="0"></option>
+                <option value="10">10%</option>
+                <option value="15">15%</option>
+                <option value="20">20%</option>
+                <option value="25">25%</option>
+                <option value="30">30%</option>
+                <option value="other">Other</option>
+              </select>
+              <input
+                type="number"
+                onChange={(e) => console.log(e)}
+                hidden={hiddenTip}
+              />
+              <h3>Total:</h3>
             </>
           )}
         </Box>
