@@ -61,6 +61,7 @@ export const BookingsControlModal = ({
     services: [],
     price: "",
     actualPrice: "",
+    totalPayment: "",
     comment: "",
     messages: [],
     date: null,
@@ -192,18 +193,21 @@ export const BookingsControlModal = ({
   };
   //Handle tip
   const handleTip = (value) => {
+    let priceDummy;
     if (value === "other") {
+      console.log(bookingInfo.totalPayment);
       setHiddenTip(false);
     } else {
-      console.log(value);
       setHiddenTip(true);
+      priceDummy =
+        bookingInfo.actualPrice + (bookingInfo.actualPrice * value) / 100;
+      setBookingInfo({ ...bookingInfo, totalPayment: priceDummy });
     }
   };
   //Set state for edit booking
   const loadBookingData = (id, type) => {
     return loadOneBooking(userToken, id)
       .then((res) => {
-        console.log(res);
         setHourSelected(res.data.timeOfBooking);
         setBookingInfo({
           ...bookingInfo,
@@ -602,10 +606,15 @@ export const BookingsControlModal = ({
               </select>
               <input
                 type="number"
-                onChange={(e) => console.log(e)}
+                onChange={(e) => {
+                  setBookingInfo({
+                    ...bookingInfo,
+                    totalPayment: bookingInfo.actualPrice + +e.target.value,
+                  });
+                }}
                 hidden={hiddenTip}
               />
-              <h3>Total:</h3>
+              <h3>Total: ${bookingInfo.totalPayment}</h3>
             </>
           )}
         </Box>
