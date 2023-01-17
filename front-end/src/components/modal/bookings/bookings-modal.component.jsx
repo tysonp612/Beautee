@@ -391,7 +391,12 @@ export const BookingsControlModal = ({
       {/* THIS MODAL IS FOR CREATING/EDITING BOOKINGS */}
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          <div className="modal-title">Schedule Booking</div>
+          {editIdSelected ? (
+            <h2 className="modal-title">EDIT BOOKING</h2>
+          ) : (
+            <h2 className="modal-title">ADD BOOKING</h2>
+          )}
+
           <div className="modal-input-wrapper">
             <div className="modal-input-container">
               <div className="customer-search-section">

@@ -57,7 +57,7 @@ export const ServicesPick = ({
   return (
     <div>
       Services:
-      <FormControl sx={{ m: 2, width: 300 }}>
+      <FormControl sx={{ m: 2, width: "20vw" }}>
         <InputLabel style={{ top: "-8px" }} id="demo-multiple-checkbox-label">
           Services
         </InputLabel>
