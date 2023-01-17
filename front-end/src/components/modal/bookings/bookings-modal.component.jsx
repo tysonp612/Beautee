@@ -12,7 +12,10 @@ import { renderMessages } from "./../../../helper/renderMessages";
 import { formatServices } from "./../../../helper/format-services";
 //UTILS
 import { findClient } from "./../../../utils/clients/clients.utils";
-
+//STRIPE
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import { StripeCheckout } from "./../../stripe/stripe.component";
 import {
   createBooking,
   loadOneBooking,
@@ -42,6 +45,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 //General ideal: each part contains its own purpose, like hour pick, technician pick, date pick, note ,services, price...
 export const BookingsControlModal = ({
   totalOpenHour,
@@ -202,6 +206,7 @@ export const BookingsControlModal = ({
       priceDummy =
         bookingInfo.actualPrice + (bookingInfo.actualPrice * value) / 100;
       setBookingInfo({ ...bookingInfo, totalPayment: priceDummy });
+      handleUserUpdate("calculatingPayingTotal", priceDummy);
     }
   };
   //Set state for edit booking
@@ -270,6 +275,8 @@ export const BookingsControlModal = ({
             comment: "",
             messages: res.data.data.technicianMessages,
           });
+        } else {
+          console.log(res.data);
         }
         toast.success(res.data.message);
       })
@@ -573,7 +580,7 @@ export const BookingsControlModal = ({
       <Modal open={openPaymentInfoModal} onClose={handleClose}>
         <Box sx={style}>
           <h2>PAYMENT INFO</h2>
-          {bookingInfo.id && (
+          {bookingInfo.id && stripePromise && (
             <>
               Client's info: {clientNamePlaceholder}
               <br />
@@ -611,10 +618,17 @@ export const BookingsControlModal = ({
                     ...bookingInfo,
                     totalPayment: bookingInfo.actualPrice + +e.target.value,
                   });
+                  handleUserUpdate(
+                    "calculatingPayingTotal",
+                    bookingInfo.actualPrice + +e.target.value
+                  );
                 }}
                 hidden={hiddenTip}
               />
               <h3>Total: ${bookingInfo.totalPayment}</h3>
+              <Elements stripe={stripePromise}>
+                <StripeCheckout currentUser={currentUser} />
+              </Elements>
             </>
           )}
         </Box>
