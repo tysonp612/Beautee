@@ -627,7 +627,10 @@ export const BookingsControlModal = ({
               />
               <h3>Total: ${bookingInfo.totalPayment}</h3>
               <Elements stripe={stripePromise}>
-                <StripeCheckout currentUser={currentUser} />
+                <StripeCheckout
+                  currentUser={currentUser}
+                  bookingId={bookingInfo.id}
+                />
               </Elements>
             </>
           )}

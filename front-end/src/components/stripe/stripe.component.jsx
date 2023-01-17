@@ -5,7 +5,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 // import { createOrder } from "./../../utils/order/order.utils";
 import { createPaymentIntent } from "./../../utils/stripe/stripe.utils";
 import "./stripe.style.css";
-export const StripeCheckout = ({ currentUser }) => {
+export const StripeCheckout = ({ currentUser, bookingId }) => {
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState("");
@@ -16,7 +16,7 @@ export const StripeCheckout = ({ currentUser }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     //when comp mounted, make request to backend and get res of client secret key
-    createPaymentIntent(currentUser.token).then((res) => {
+    createPaymentIntent(currentUser.token, bookingId).then((res) => {
       setClientSecret(res.data.clientSecret);
     });
   }, []);
