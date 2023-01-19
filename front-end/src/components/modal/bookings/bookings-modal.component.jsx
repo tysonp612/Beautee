@@ -199,7 +199,6 @@ export const BookingsControlModal = ({
   const handleTip = (value) => {
     let priceDummy;
     if (value === "other") {
-      console.log(bookingInfo.totalPayment);
       setHiddenTip(false);
     } else {
       setHiddenTip(true);
@@ -234,6 +233,9 @@ export const BookingsControlModal = ({
           actualPrice: res.data.price.actualPrice
             ? res.data.price.actualPrice
             : res.data.price.estimatedPrice,
+          totalPayment: res.data.totalPayment
+            ? res.data.totalPayment
+            : res.data.price.actualPrice,
           note: res.data.note,
         });
         //2 things that needed to workaround are client name and services

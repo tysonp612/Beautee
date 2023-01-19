@@ -165,6 +165,7 @@ exports.loadUserBookings = async (req, res) => {
         path: "services.actualService",
         select: "service",
       });
+
     res.status(200).json(bookings);
   } catch (err) {
     console.log(err);
