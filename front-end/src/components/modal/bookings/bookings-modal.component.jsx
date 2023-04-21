@@ -141,6 +141,7 @@ export const BookingsControlModal = ({
     paymentModalIdSelected,
   ]);
   useEffect(() => {
+    //check if there is a number in totalPayment, if so, run the update, if there is no check, then in case useEffect when there is no number, it still run the update and get the error
     if (bookingInfo.totalPayment) {
       handleUserUpdate("calculatingPayingTotal", bookingInfo.totalPayment);
     }
@@ -633,6 +634,7 @@ export const BookingsControlModal = ({
               <h3>Total: ${bookingInfo.totalPayment}</h3>
               <Elements stripe={stripePromise}>
                 <StripeCheckout
+                  handleClose={handleClose}
                   bookingInfo={bookingInfo}
                   setBookingInfo={bookingInfo}
                   handleUserUpdate={handleUserUpdate}

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-// import { emptyCart } from "./../../utils/user/user.utils";
-// import { createOrder } from "./../../utils/order/order.utils";
 import { createPaymentIntent } from "./../../utils/stripe/stripe.utils";
 import "./stripe.style.css";
-export const StripeCheckout = ({ currentUser, bookingId }) => {
+//toast message helper
+import { toastMessage } from "./../../helper/toast-messages";
+export const StripeCheckout = ({ currentUser, bookingId, handleClose }) => {
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState("");
@@ -13,7 +12,7 @@ export const StripeCheckout = ({ currentUser, bookingId }) => {
   const [clientSecret, setClientSecret] = useState("");
   const elements = useElements();
   const stripe = useStripe();
-  const dispatch = useDispatch();
+
   useEffect(() => {
     //when comp mounted, make request to backend and get res of client secret key
     createPaymentIntent(currentUser.token, bookingId).then((res) => {
@@ -53,19 +52,8 @@ export const StripeCheckout = ({ currentUser, bookingId }) => {
       setError(`Payment failed ${payload.error.message}`);
       setProcessing(false);
     } else {
-      //get result after successful payment
-      console.log(payload);
-      //create order and save in db for admin to process
-      //   createOrder(payload.paymentIntent, user.token)
-      //     .then((res) => {
-      //       if (res.data.ok) {
-      //         //emptyCart
-      //         emptyCart(user.token);
-      //         dispatch({ type: "EMPTY_CART" });
-      //       }
-      //     })
-      //     .catch((err) => console.log(err));
-
+      toastMessage("s", "Payment successfully!");
+      handleClose();
       setError(null);
       setProcessing(false);
       setSucceeded(true);
