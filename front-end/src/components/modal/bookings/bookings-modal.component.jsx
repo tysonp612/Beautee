@@ -140,7 +140,11 @@ export const BookingsControlModal = ({
     showBookingIdSelected,
     paymentModalIdSelected,
   ]);
-
+  useEffect(() => {
+    if (bookingInfo.totalPayment) {
+      handleUserUpdate("calculatingPayingTotal", bookingInfo.totalPayment);
+    }
+  }, [bookingInfo.totalPayment]);
   //HANDLE
   const handleClose = () => {
     dispatch({
@@ -173,6 +177,7 @@ export const BookingsControlModal = ({
       initialServices: [],
       price: "",
       actualPrice: "",
+      totalPayment: "",
       date: null,
       comment: "",
       note: "",
@@ -205,7 +210,6 @@ export const BookingsControlModal = ({
       priceDummy =
         bookingInfo.actualPrice + (bookingInfo.actualPrice * value) / 100;
       setBookingInfo({ ...bookingInfo, totalPayment: priceDummy });
-      handleUserUpdate("calculatingPayingTotal", priceDummy);
     }
   };
   //Set state for edit booking
@@ -233,9 +237,7 @@ export const BookingsControlModal = ({
           actualPrice: res.data.price.actualPrice
             ? res.data.price.actualPrice
             : res.data.price.estimatedPrice,
-          totalPayment: res.data.totalPayment
-            ? res.data.totalPayment
-            : res.data.price.actualPrice,
+          totalPayment: res.data.price.actualPrice,
           note: res.data.note,
         });
         //2 things that needed to workaround are client name and services
@@ -625,16 +627,15 @@ export const BookingsControlModal = ({
                     ...bookingInfo,
                     totalPayment: bookingInfo.actualPrice + +e.target.value,
                   });
-                  handleUserUpdate(
-                    "calculatingPayingTotal",
-                    bookingInfo.actualPrice + +e.target.value
-                  );
                 }}
                 hidden={hiddenTip}
               />
               <h3>Total: ${bookingInfo.totalPayment}</h3>
               <Elements stripe={stripePromise}>
                 <StripeCheckout
+                  bookingInfo={bookingInfo}
+                  setBookingInfo={bookingInfo}
+                  handleUserUpdate={handleUserUpdate}
                   currentUser={currentUser}
                   bookingId={bookingInfo.id}
                 />

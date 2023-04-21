@@ -4,7 +4,7 @@ exports.createPaymentIntent = async (req, res) => {
   //1 find Booking
   const booking = await Booking.findOne({ _id: req.body.bookingId });
 
-  // 2 get total amount
+  // 2 get total amount from booking
   let totalAmountPay = booking.totalPayment;
   console.log(totalAmountPay);
   if (booking && totalAmountPay > 0) {

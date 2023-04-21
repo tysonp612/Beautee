@@ -39,6 +39,7 @@ export const StripeCheckout = ({ currentUser, bookingId }) => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setProcessing(true);
     const payload = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {

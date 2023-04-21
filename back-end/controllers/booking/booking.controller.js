@@ -249,6 +249,7 @@ exports.userUpdateBooking = async (req, res) => {
       res.status(200).json(bookingUpdatePayingTotal.totalPayment);
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Error!, please try again" });
   }
 };
