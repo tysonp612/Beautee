@@ -4,6 +4,9 @@ import { createPaymentIntent } from "./../../utils/stripe/stripe.utils";
 import "./stripe.style.css";
 //toast message helper
 import { toastMessage } from "./../../helper/toast-messages";
+//Import closBooking until to close booking (change colors)
+import { closeBooking } from "./../../utils/bookings/bookings.utils";
+
 export const StripeCheckout = ({ currentUser, bookingId, handleClose }) => {
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
@@ -52,8 +55,14 @@ export const StripeCheckout = ({ currentUser, bookingId, handleClose }) => {
       setError(`Payment failed ${payload.error.message}`);
       setProcessing(false);
     } else {
+      //if payment is successed
+      //print out success message
       toastMessage("s", "Payment successfully!");
+      //set booking to Finished, changing the color and access
+      closeBooking(currentUser.token, bookingId);
+      //close all the modal and reset temp var
       handleClose();
+      //set temp val to null and false
       setError(null);
       setProcessing(false);
       setSucceeded(true);

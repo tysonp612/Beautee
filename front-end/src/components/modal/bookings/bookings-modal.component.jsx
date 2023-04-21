@@ -635,9 +635,6 @@ export const BookingsControlModal = ({
               <Elements stripe={stripePromise}>
                 <StripeCheckout
                   handleClose={handleClose}
-                  bookingInfo={bookingInfo}
-                  setBookingInfo={bookingInfo}
-                  handleUserUpdate={handleUserUpdate}
                   currentUser={currentUser}
                   bookingId={bookingInfo.id}
                 />

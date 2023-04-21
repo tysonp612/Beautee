@@ -96,3 +96,15 @@ export const loadAllUserBookings = async (userToken, userId, date) => {
     }
   );
 };
+
+export const closeBooking = async (adminToken, bookingId) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/booking_closeBooking`,
+    { id: bookingId },
+    {
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+      },
+    }
+  );
+};
