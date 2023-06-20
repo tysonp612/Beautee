@@ -9,6 +9,8 @@ import { DatePickerComponent } from "./../../components/date-picker/date-picker.
 import { BookingsControlModal } from "../../components/modal/bookings/bookings-modal.component";
 //grid
 import { GridComponent } from "./../../components/grid/grid.component";
+//drawer
+import { TemporaryDrawer } from "./../../components/drawer/drawer.component";
 export const AdminPage = () => {
   const [reload, setReload] = useState(false);
   const [allBookings, setAllBookings] = useState(null);
@@ -71,6 +73,7 @@ export const AdminPage = () => {
         userToken={userToken}
       />
       <DatePickerComponent setDate={setDate} />
+      <TemporaryDrawer />
       {/* THIS PART IS FOR CREATE BOOKINGS AND EDIT BOOKINGS */}
       <BookingsControlModal
         totalOpenHour={totalOpenHour}

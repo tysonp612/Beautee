@@ -32,12 +32,12 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* Protected Routes */}
-        <Route exact path="/admin/bookings" element={<AdminRoute />}>
-          <Route exact path="/admin/bookings" element={<AdminPage />}></Route>
+        <Route exact path="/admin/schedule" element={<AdminRoute />}>
+          <Route exact path="/admin/schedule" element={<AdminPage />}></Route>
         </Route>
 
-        <Route exact path="/user/bookings" element={<UserRoute />}>
-          <Route exact path="/user/bookings" element={<UserPage />}></Route>
+        <Route exact path="/user/schedule" element={<UserRoute />}>
+          <Route exact path="/user/schedule" element={<UserPage />}></Route>
         </Route>
       </Routes>
       <ToastContainer />

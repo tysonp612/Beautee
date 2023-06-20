@@ -431,6 +431,7 @@ export const BookingsControlModal = ({
                   >
                     X
                   </div>
+                  /* "X" is a close button8 */
                 </div>
               </div>
               {/* CREATE-CLIENT */}
