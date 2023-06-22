@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 //style
 import "./admin-page.style.css";
+import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { loadAllServices } from "./../../utils/services/services.utils";
+import {
+  loadAllServices,
+  createNewService,
+} from "./../../utils/services/services.utils";
 
 export const AdminServicePage = () => {
+  const userToken = useSelector((state) => state.user.currentUser.token);
   const [reload, setReload] = useState(false);
   const [allServices, setAllServices] = useState([]);
 
@@ -19,7 +24,13 @@ export const AdminServicePage = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(newService);
+    return createNewService(newService, userToken)
+      .then((res) => {
+        setReload(!reload);
+        toast.success("Service created!");
+        setNewService({ name: "", price: "" });
+      })
+      .catch((err) => console.log(err));
   };
   useEffect(() => {
     getServices();

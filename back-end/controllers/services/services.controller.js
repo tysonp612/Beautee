@@ -2,10 +2,9 @@ const Services = require("./../../models/services.model");
 
 exports.createService = async (req, res) => {
   try {
-    const { newService, price } = req.body.serviceData;
-    console.log(newService, price);
+    const { name, price } = req.body.serviceData;
     const service = await new Services({
-      service: newService,
+      service: name,
       price,
     }).save();
     res.status(200).json({ service: service, message: "Service created" });
