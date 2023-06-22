@@ -1,0 +1,31 @@
+.services-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  /* justify-content: space-evenly; */
+  background-color: yellow;
+}
+.services-wrapper {
+  margin: 2%;
+  width: auto;
+  height: 700px;
+}
+.new-services {
+  width: 30%;
+  border-right: 1px solid black;
+}
+.existing-services {
+  width: 70%;
+}
+.services-header {
+  font-size: 1.5em;
+  text-align: center;
+  padding: 1em;
+}
+.new-services-form {
+  padding-left: 20px;
+}
+.existing-services-list {
+  padding-left: 20px;
+  font-size: 1.2em;
+}

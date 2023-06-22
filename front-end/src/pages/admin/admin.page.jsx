@@ -10,7 +10,7 @@ import { BookingsControlModal } from "../../components/modal/bookings/bookings-m
 //grid
 import { GridComponent } from "./../../components/grid/grid.component";
 //drawer
-import { TemporaryDrawer } from "./../../components/drawer/drawer.component";
+// import { TemporaryDrawer } from "./../../components/drawer/drawer.component";
 export const AdminPage = () => {
   const [reload, setReload] = useState(false);
   const [allBookings, setAllBookings] = useState(null);
@@ -61,7 +61,6 @@ export const AdminPage = () => {
   };
   return (
     <div>
-      HELLO FROM ADMIN
       {/* GRID */}
       <GridComponent
         openHour={openHour}
@@ -73,7 +72,7 @@ export const AdminPage = () => {
         userToken={userToken}
       />
       <DatePickerComponent setDate={setDate} />
-      <TemporaryDrawer />
+      {/* <TemporaryDrawer /> */}
       {/* THIS PART IS FOR CREATE BOOKINGS AND EDIT BOOKINGS */}
       <BookingsControlModal
         totalOpenHour={totalOpenHour}

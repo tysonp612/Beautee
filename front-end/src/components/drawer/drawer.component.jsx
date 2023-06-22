@@ -16,7 +16,7 @@ import MailIcon from "@mui/icons-material/Mail";
 
 export const TemporaryDrawer = () => {
   const navigate = useNavigate();
-  const userRole = useSelector((state) => state.user.currentUser.role);
+  // const userRole = useSelector((state) => state.user.currentUser.role);
   const [state, setState] = React.useState({
     left: false,
   });
@@ -26,8 +26,12 @@ export const TemporaryDrawer = () => {
   };
   //getlink will get the text when user click on button and make it a route to that text, then it will push the user to the link
   const getLink = (text) => {
-    const lowerCase = text.toLowerCase();
-    navigate(`/${userRole}/${lowerCase}`);
+    // const lowerCase = text.toLowerCase();
+    // if (userRole) {
+    //   navigate(`/${userRole}/${lowerCase}`);
+    // } else {
+    //   return;
+    // }
   };
   const list = (anchor) => (
     <Box
@@ -39,7 +43,6 @@ export const TemporaryDrawer = () => {
       <List>
         {[
           "Bookings",
-          "Schedule",
           "Services",
           "Customers",
           "Technicians",

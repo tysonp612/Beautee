@@ -26,7 +26,6 @@ export const LoginPage = () => {
     e.preventDefault();
     return logIn(credentials)
       .then((res) => {
-        console.log(res);
         //toast success
         toast.success(res.data.message);
         // dispatch userdata

@@ -39,3 +39,10 @@ This includes
 6. Price should be in form of $00.00
 7. User should have option to update their picture profile, and show that picture
 8. More optimization for responsiveness
+
+Friday 21/4, continuing the project
+TODO
+
+- After paying successfully, close the modal and print out the message
+- Change the color of the booking, nolonger clickable
+- Make a nav bar

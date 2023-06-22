@@ -16,10 +16,13 @@ import { ForgotPassowrd } from "./pages/forgot-password/forgot-password.page";
 import { ResetPassword } from "./pages/reset-password/reset-password.page";
 //Admin page
 import { AdminPage } from "./pages/admin/admin.page";
+import { AdminServicePage } from "./pages/admin/admin-services.page";
 //User page
 import { UserPage } from "./pages/user/user.page";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+//Drawer (Menu)
+import { TemporaryDrawer } from "./components/drawer/drawer.component";
 function App() {
   return (
     <div>
@@ -32,14 +35,22 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* Protected Routes */}
-        <Route exact path="/admin/schedule" element={<AdminRoute />}>
-          <Route exact path="/admin/schedule" element={<AdminPage />}></Route>
+        <Route exact path="/admin/bookings" element={<AdminRoute />}>
+          <Route exact path="/admin/bookings" element={<AdminPage />}></Route>
+        </Route>
+        <Route exact path="/admin/services" element={<AdminRoute />}>
+          <Route
+            exact
+            path="/admin/services"
+            element={<AdminServicePage />}
+          ></Route>
         </Route>
 
         <Route exact path="/user/schedule" element={<UserRoute />}>
           <Route exact path="/user/schedule" element={<UserPage />}></Route>
         </Route>
       </Routes>
+      <TemporaryDrawer />
       <ToastContainer />
     </div>
   );
